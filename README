@@ -1,0 +1,5 @@
+Some HTML5 canvas stuff
+
+Currently
+- A dashed line implementation for the HTML5 2D canvas
+based on the AS3 implementation from github.com/herrlinger/as3components

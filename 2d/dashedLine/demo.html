@@ -1,0 +1,58 @@
+<html>
+<head>
+  <title>canvas test</title>
+</head>
+<body>
+<div id="title"></div>
+<div style="float: left;">
+Original<br/>
+<canvas id="testCanvas" width="400" height="400" />
+</div>
+<div style="float: left;">
+With dashedLine<br/>
+<canvas id="testCanvas2" width="400" height="400" />
+</div>
+
+<script type="text/javascript">
+
+function draw(g2d)
+{
+  /* Needs a more creative example */
+  
+  g2d.shadowColor = '#3E4237';
+  g2d.shadowOffsetX = 1;
+  g2d.shadowOffsetY = 1;
+  g2d.shadowBlur = 3;
+  g2d.dashed = true;
+  g2d.strokeStyle = '#7D9100';
+  g2d.fillStyle = '#efefef';
+  g2d.lineWidth = 3;
+  
+  g2d.beginPath();
+  g2d.moveTo(50, 100);
+  g2d.lineTo(50, 200);
+  g2d.lineTo(400, 400);
+  g2d.stroke();
+  g2d.fill();
+ 
+  
+  g2d.beginPath();
+  g2d.lineTo(175, 60);
+  g2d.arc(200, 50, 100, Math.PI / 180 * 45, Math.PI / 180 * 135);
+  g2d.arc(100, 50, 25, 0, Math.PI / 180 * 260);
+  g2d.closePath();
+  g2d.lineTo(300, 50);
+  g2d.lineTo(175, 100);
+  g2d.fill();
+  g2d.stroke();
+  
+}
+
+draw(document.getElementById('testCanvas').getContext('2d'));
+</script>
+<script type="text/javascript" src="dashedLine.js"></script>
+<script type="text/javascript">
+draw(document.getElementById('testCanvas2').getContext('2d'));
+</script>
+</body>
+</html>
