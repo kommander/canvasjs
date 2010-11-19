@@ -87,26 +87,24 @@ CanvasRenderingContext2D.prototype.dashedLineTo = function (x, y)
           }
           this.currentMoveX += xInc;
           this.currentMoveY += yInc;
-          this.curLengthIndex = i;
+          
           this.lengthStartIndex = 0;
           this.remainingDist = 0;
         } else {
           this.remainingDist = Math.sqrt(Math.pow((x - this.currentMoveX),2) + Math.pow((y - this.currentMoveY), 2)); 
-          this.curLengthIndex = i;
+          this.lengthStartIndex = i;
           break outerLoop;
         }
     }
   }
   
-  this.lengthStartIndex = this.curLengthIndex;
-
   if (this.remainingDist != 0)
   {
-    if (this.curLengthIndex % 2 == 0)
+    if (this.lengthStartIndex % 2 == 0)
       this.superLineTo(x,y);
     else
       this.superMoveTo(x,y);
-    this.remainingDist = this.dashPattern[this.curLengthIndex] - this.remainingDist;
+    this.remainingDist = this.dashPattern[this.lengthStartIndex] - this.remainingDist;
   } else {
     if (this.lengthStartIndex == this.dashPattern.length - 1)
       this.lengthStartIndex = 0;
@@ -131,15 +129,60 @@ CanvasRenderingContext2D.prototype.lineTo = function(x, y)
   this.currentSubPath.push(['l', x, y]);
 }
 
+CanvasRenderingContext2D.prototype.dashedArc = function(x, y, radius, startAngle, endAngle, anticlockwise)
+{
+  var currentAngle = startAngle;
+  var targetAngle = endAngle;
+  
+  outerLoop : while (currentAngle < targetAngle)
+  {
+    for (var i = this.lengthStartIndex; i < this.dashPattern.length; i++)
+    {
+        var angleStep = ((this.remainingDist == 0) ? this.dashPattern[i] : this.remainingDist) / radius;
+        
+        if (currentAngle + angleStep < targetAngle)
+        {
+          if (i % 2 == 0)
+          {
+            this.superBeginPath();
+            this.superArc(x, y, radius, currentAngle, currentAngle + angleStep);
+            this.superStroke();
+          } 
+          currentAngle += angleStep;
+          
+          this.lengthStartIndex = 0;
+          this.remainingDist = 0;
+        } else {
+          this.lengthStartIndex = i;
+          this.remainingDist = (targetAngle - currentAngle) * radius; 
+          break outerLoop;
+        }
+    }
+  }
+  
+  if (this.remainingDist != 0)
+  {
+    if (this.lengthStartIndex % 2 == 0)
+    {
+      this.superBeginPath();
+      this.superArc(x, y, radius, currentAngle, endAngle);
+      this.superStroke();
+    }
+    this.remainingDist = this.dashPattern[this.lengthStartIndex] - this.remainingDist;
+  } else {
+    if (this.lengthStartIndex == this.dashPattern.length - 1)
+      this.lengthStartIndex = 0;
+    else
+      this.lengthStartIndex++;
+  }
+}
+
 CanvasRenderingContext2D.prototype.superArc = CanvasRenderingContext2D.prototype.arc;
 CanvasRenderingContext2D.prototype.arc = function(x, y, radius, startAngle, endAngle, anticlockwise)
 {
   if(this.currentSubPath != null && this.currentSubPath.length > 0)
   {
-    this.lineTo(
-      x + radius * Math.cos(startAngle), 
-      y + radius * Math.sin(startAngle)
-    );
+    this.currentSubPath.push(['al', x + radius * Math.cos(startAngle), y + radius * Math.sin(startAngle)]);
   } else {
     this.currentSubPath = [];
     this.subPaths.push(this.currentSubPath);
@@ -199,21 +242,24 @@ CanvasRenderingContext2D.prototype.stroke = function()
       {
         switch(this.subPaths[sk][k][0])
         {
+          case 'al':
+            this.dashedLineTo(this.subPaths[sk][k][1], this.subPaths[sk][k][2]);
+            this.superStroke();
+            break;
           case 'c':
           case 'l':
             this.dashedLineTo(this.subPaths[sk][k][1], this.subPaths[sk][k][2]);
             break;
-          case 'am':
           case 'm':
-            this.currentMoveX = this.subPaths[sk][k][1];
-            this.currentMoveY = this.subPaths[sk][k][2];
             this.lengthStartIndex = 0;
             this.remainingDist = 0;
-            this.curLengthIndex = 0;
+          case 'am':
+            this.currentMoveX = this.subPaths[sk][k][1];
+            this.currentMoveY = this.subPaths[sk][k][2];
             this.superMoveTo(this.subPaths[sk][k][1], this.subPaths[sk][k][2]);
             break;
           case 'a':
-            this.superArc(this.subPaths[sk][k][1], this.subPaths[sk][k][2], this.subPaths[sk][k][3], this.subPaths[sk][k][4], this.subPaths[sk][k][5]);
+            this.dashedArc(this.subPaths[sk][k][1], this.subPaths[sk][k][2], this.subPaths[sk][k][3], this.subPaths[sk][k][4], this.subPaths[sk][k][5]);
             break;
         }
       }
