@@ -349,17 +349,20 @@ CanvasRenderingContext2D.prototype.stroke = function()
       }
       
     } else {
-      for(k in this.currentSubPath)
-        switch(this.currentSubPath[k][0])
+      for(k in this.subPaths[sk])
+        switch(this.subPaths[sk][k][0])
         {
+          case 'c':
+            this.superClosePath();
+            break;
           case 'l':
-            this.superLineTo(this.currentSubPath[k][1], this.currentSubPath[k][2]);
+            this.superLineTo(this.subPaths[sk][k][1], this.subPaths[sk][k][2]);
             break;
           case 'm':
-            this.superMoveTo(this.currentSubPath[k][1], this.currentSubPath[k][2]);
+            this.superMoveTo(this.subPaths[sk][k][1], this.subPaths[sk][k][2]);
             break;
           case 'a':
-            this.superArc(this.currentSubPath[k][1], this.currentSubPath[k][2], this.currentSubPath[k][3], this.currentSubPath[k][4], this.currentSubPath[k][5]);
+            this.superArc(this.subPaths[sk][k][1], this.subPaths[sk][k][2], this.subPaths[sk][k][3], this.subPaths[sk][k][4], this.subPaths[sk][k][5]);
             break;
           case 'b':
             this.superBezierCurveTo(
