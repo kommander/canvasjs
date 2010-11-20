@@ -60,21 +60,20 @@ CanvasRenderingContext2D.prototype.getCoords = function(distance, slope)
 
 CanvasRenderingContext2D.prototype.dashedLineTo = function (x, y) 
 {
-  var slope = (y - this.currentMoveY)/(x - this.currentMoveX);
+  var slope = (y - this.currentMoveY) / (x - this.currentMoveX);
   var startX = this.currentMoveX;
   var startY = this.currentMoveY;
   var xDir = (x < startX) ? -1 : 1;
   var yDir = (y < startY) ? -1 : 1;
   
-  
-  // keep drawing dashes and gaps as long as either the current x or y is not beyond the destination x or y
   outerLoop : while (Math.abs(startX - this.currentMoveX) < Math.abs(startX - x) || Math.abs(startY - this.currentMoveY) < Math.abs(startY - y))
   {
     for (var i = this.lengthStartIndex; i < this.dashPattern.length; i++)
     {
         var dist = (this.remainingDist == 0) ? this.dashPattern[i] : this.remainingDist;
-        var xInc = this.getCoords(dist, slope)[0] * xDir;
-        var yInc = this.getCoords(dist, slope)[1] * yDir;
+        var coords = this.getCoords(dist, slope);
+        var xInc = coords[0] * xDir;
+        var yInc = coords[1] * yDir;
         
         if (Math.abs(startX - this.currentMoveX) + Math.abs(xInc) < Math.abs(startX - x) 
           || Math.abs(startY - this.currentMoveY) + Math.abs(yInc) < Math.abs(startY - y))
@@ -115,6 +114,8 @@ CanvasRenderingContext2D.prototype.dashedLineTo = function (x, y)
   this.currentMoveY = y;
 }
 
+CanvasRenderingContext2D.prototype.remainingDist = 0;
+CanvasRenderingContext2D.prototype.lengthStartIndex = 0;
 CanvasRenderingContext2D.prototype.dashed = false;
 CanvasRenderingContext2D.prototype.dashPattern = [10, 4];
 CanvasRenderingContext2D.prototype.superLineTo = CanvasRenderingContext2D.prototype.lineTo;
@@ -260,6 +261,28 @@ CanvasRenderingContext2D.prototype.rect = function(x, y, width, height)
   this.currentSubPath.push(['l', x + width, y + height]);
   this.currentSubPath.push(['l', x, y + height]);
   this.closePath();
+}
+
+CanvasRenderingContext2D.prototype.superStrokeRect = CanvasRenderingContext2D.prototype.strokeRect;
+CanvasRenderingContext2D.prototype.strokeRect = function(x, y, width, height)
+{
+  if(this.dashed)
+  {
+    var cmxyb = [this.currentMoveX, this.currentMoveY];
+    this.currentMoveX = x;
+    this.currentMoveY = y;
+    this.superBeginPath();
+    this.superMoveTo(x, y);
+    this.dashedLineTo(x + width, y);
+    this.dashedLineTo(x + width, y + height);
+    this.dashedLineTo(x, y + height);
+    this.dashedLineTo(x, y);
+    this.superStroke();
+    this.currentMoveX = cmxyb[0];
+    this.currentMoveY = cmxyb[1];
+  } else {
+    this.superStrokeRect(x, y, width, height);
+  }
 }
 
 CanvasRenderingContext2D.prototype.superArc = CanvasRenderingContext2D.prototype.arc;

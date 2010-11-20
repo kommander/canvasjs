@@ -28,6 +28,7 @@ function draw(g2d)
   g2d.strokeStyle = '#7D9100';
   g2d.fillStyle = '#efefef';
   g2d.lineWidth = 3;
+  g2d.strokeRect(220, 100, 75, 50);
   
   g2d.beginPath();
   g2d.moveTo(50, 100);
@@ -36,11 +37,11 @@ function draw(g2d)
   g2d.stroke();
   g2d.fill();
  
-  
   g2d.beginPath();
   g2d.lineTo(175, 60);
   g2d.arc(200, 50, 100, Math.PI / 180 * 45, Math.PI / 180 * 135);
   g2d.arc(100, 50, 25, 0, Math.PI / 180 * 260);
+  g2d.strokeRect(280, 200, 75, 50);
   g2d.closePath();
   g2d.lineTo(300, 50);
   g2d.lineTo(175, 100);
@@ -50,14 +51,10 @@ function draw(g2d)
   
   g2d.beginPath();
   g2d.fillRect(300, 300, 75, 50);
-  g2d.rect(100, 100, 75, 50);
+  g2d.rect(90, 150, 75, 50);
   g2d.fill();
   g2d.stroke();
   
-  /*
-  data = g2d.getImageData(0, 0, 400, 400);
-  g2d.putImageData(data, 50, 50);
-  */
 }
 
 draw(document.getElementById('testCanvas').getContext('2d'));
