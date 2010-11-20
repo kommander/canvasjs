@@ -47,6 +47,17 @@ function draw(g2d)
   g2d.fill();
   g2d.bezierCurveTo(100, 100, 350, 300, 50, 350);
   g2d.stroke();
+  
+  g2d.beginPath();
+  g2d.fillRect(300, 300, 75, 50);
+  g2d.rect(100, 100, 75, 50);
+  g2d.fill();
+  g2d.stroke();
+  
+  /*
+  data = g2d.getImageData(0, 0, 400, 400);
+  g2d.putImageData(data, 50, 50);
+  */
 }
 
 draw(document.getElementById('testCanvas').getContext('2d'));

@@ -249,6 +249,19 @@ CanvasRenderingContext2D.prototype.dashedArc = function(x, y, radius, startAngle
   }
 }
 
+CanvasRenderingContext2D.prototype.superRect = CanvasRenderingContext2D.prototype.rect;
+CanvasRenderingContext2D.prototype.rect = function(x, y, width, height)
+{
+  this.currentSubPath = [];
+    this.subPaths.push(this.currentSubPath);
+  
+  this.currentSubPath.push(['m', x, y]);
+  this.currentSubPath.push(['l', x + width, y]);
+  this.currentSubPath.push(['l', x + width, y + height]);
+  this.currentSubPath.push(['l', x, y + height]);
+  this.closePath();
+}
+
 CanvasRenderingContext2D.prototype.superArc = CanvasRenderingContext2D.prototype.arc;
 CanvasRenderingContext2D.prototype.arc = function(x, y, radius, startAngle, endAngle, anticlockwise)
 {
