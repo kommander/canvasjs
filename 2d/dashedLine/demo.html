@@ -24,6 +24,7 @@ function draw(g2d)
   g2d.shadowOffsetY = 1;
   g2d.shadowBlur = 3;
   g2d.dashed = true;
+  g2d.dashPattern = [10, 5, 20, 5]
   g2d.strokeStyle = '#7D9100';
   g2d.fillStyle = '#efefef';
   g2d.lineWidth = 3;
@@ -44,8 +45,8 @@ function draw(g2d)
   g2d.lineTo(300, 50);
   g2d.lineTo(175, 100);
   g2d.fill();
+  g2d.bezierCurveTo(100, 100, 350, 300, 50, 350);
   g2d.stroke();
-  
 }
 
 draw(document.getElementById('testCanvas').getContext('2d'));

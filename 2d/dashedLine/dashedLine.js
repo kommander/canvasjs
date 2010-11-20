@@ -129,6 +129,78 @@ CanvasRenderingContext2D.prototype.lineTo = function(x, y)
   this.currentSubPath.push(['l', x, y]);
 }
 
+CanvasRenderingContext2D.prototype.bezierPrecision = .001;
+CanvasRenderingContext2D.prototype.dashedBezierCurveTo = function(fromX, fromY, cp1x, cp1y, cp2x, cp2y, toX, toY)
+{
+  var xbefore = fromX;
+  var ybefore = fromY;
+  var traveled = 0;
+  var draw = true;
+  var renderSteps = 0;
+  var skipped = 0;
+  var dashLength = (this.remainingDist == 0) ? this.dashPattern[this.lengthStartIndex] : this.remainingDist;
+  
+  for(t = .0; t <= 1.0; t += this.bezierPrecision)
+  {
+    
+    var x = this.bezierCoordForTime(fromX, cp1x, cp2x, toX, t);
+    var y = this.bezierCoordForTime(fromY, cp1y, cp2y, toY, t);
+    
+    if(Math.abs(xbefore - x) < .35 && Math.abs(ybefore - y) < .35)
+    {
+      t += this.bezierPrecision;
+      skipped++;
+      if(skipped < dashLength * 1.3)
+        continue;
+      else
+        skipped = 0;
+    }
+      
+    
+    traveled += this.distance(xbefore, ybefore, x, y);
+    if(traveled >= dashLength)
+    {
+      this.lengthStartIndex = (this.lengthStartIndex == this.dashPattern.length - 1) ? 0 : this.lengthStartIndex + 1;
+      dashLength = this.dashPattern[this.lengthStartIndex];
+      draw = (this.lengthStartIndex % 2 == 0) ? true : false;
+      this.superStroke();
+      this.superBeginPath();
+      traveled = 0;
+    }
+    
+    if(draw){
+      this.superLineTo(x, y);
+    }
+    
+    xbefore = x;
+    ybefore = y;
+    renderSteps++;
+  }
+  this.remainingDist = this.dashPattern[this.lengthStartIndex] - traveled;
+}
+
+CanvasRenderingContext2D.prototype.distance = function(fromX, fromY, toX, toY)
+{
+  return Math.sqrt(Math.pow((toX - fromX),2) + Math.pow((toY - fromY), 2))
+}
+
+CanvasRenderingContext2D.prototype.bezierCoordForTime = function(p0, p1, p2, p3, t)
+{
+  return Math.pow((1 - t), 3) * p0 + 3 * Math.pow((1 - t), 2) * t * p1 + 3 * (1 - t) * Math.pow(t, 2) * p2 + Math.pow(t, 3) * p3;
+}
+
+CanvasRenderingContext2D.prototype.superBezierCurveTo = CanvasRenderingContext2D.prototype.bezierCurveTo;
+CanvasRenderingContext2D.prototype.bezierCurveTo = function(cp1x, cp1y, cp2x, cp2y, x, y)
+{
+  if(this.currentSubPath == null)
+  {
+    this.currentSubPath = [];
+    this.subPaths.push(this.currentSubPath);
+  }
+  
+  this.currentSubPath.push(['b', cp1x, cp1y, cp2x, cp2y, x, y]);
+}
+
 CanvasRenderingContext2D.prototype.dashedArc = function(x, y, radius, startAngle, endAngle, anticlockwise)
 {
   var currentAngle = startAngle;
@@ -261,6 +333,18 @@ CanvasRenderingContext2D.prototype.stroke = function()
           case 'a':
             this.dashedArc(this.subPaths[sk][k][1], this.subPaths[sk][k][2], this.subPaths[sk][k][3], this.subPaths[sk][k][4], this.subPaths[sk][k][5]);
             break;
+          case 'b':
+            this.dashedBezierCurveTo(
+              this.currentMoveX, 
+              this.currentMoveY, 
+              this.subPaths[sk][k][1], 
+              this.subPaths[sk][k][2], 
+              this.subPaths[sk][k][3], 
+              this.subPaths[sk][k][4], 
+              this.subPaths[sk][k][5],
+              this.subPaths[sk][k][6]
+            );
+            break;
         }
       }
       
@@ -276,6 +360,16 @@ CanvasRenderingContext2D.prototype.stroke = function()
             break;
           case 'a':
             this.superArc(this.currentSubPath[k][1], this.currentSubPath[k][2], this.currentSubPath[k][3], this.currentSubPath[k][4], this.currentSubPath[k][5]);
+            break;
+          case 'b':
+            this.superBezierCurveTo(
+              this.subPaths[sk][k][1], 
+              this.subPaths[sk][k][2], 
+              this.subPaths[sk][k][3], 
+              this.subPaths[sk][k][4], 
+              this.subPaths[sk][k][5],
+              this.subPaths[sk][k][6]
+            );
             break;
         }
     }
