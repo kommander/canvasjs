@@ -1,0 +1,119 @@
+<html>
+<head>
+  <title>canvas 2d bezier animation test</title>
+  <script type="text/javascript" src="loop.js"></script>
+</head>
+<body>
+<div style="float: left;">
+<canvas id="testCanvas" width="400" height="400" />
+</div>
+
+<script type="text/javascript">
+var canvas = document.getElementById('testCanvas');
+
+var mouseDownPoint = {x: 0, y: 0 };
+var lastPoint = {x: 0, y: 0 };
+var mouseDown = false;
+
+var background = {
+  draw: function(context)
+  {
+    context.fillStyle = '#666666';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+  }
+};
+
+function bezier(){
+  this.fromX = 0;
+  this.fromY = 0;
+  this.toX = 0;
+  this.toY = 0;
+  this.a1x = 0;
+  this.a1y = 0;
+  this.a2x = 0;
+  this.a2y = 0;
+  this.visible = true;
+  
+  this.draw = function(context)
+  {
+    context.beginPath();
+    context.strokeStyle = '#00ffff';
+    context.moveTo(this.fromX, this.fromY);
+    context.bezierCurveTo(this.a1x, this.a1y, this.a2x, this.a2y, this.toX, this.toY);
+    context.moveTo(this.toX, this.toY);
+    context.lineTo(this.a2x, this.a2y);
+    context.stroke();
+  };
+};
+
+var currentBezier = new bezier();
+currentBezier.visible = false;
+
+canvas.onmousedown = function(e)
+{
+  mouseDown = true;
+  currentBezier.visible = true;
+  
+  lastPoint.x = mouseDownPoint.x;
+  lastPoint.y = mouseDownPoint.y;
+  
+  if(e.offsetX) {
+      mouseDownPoint.x = e.offsetX;
+      mouseDownPoint.y = e.offsetY;
+  }
+  else if(e.layerX) {
+      mouseDownPoint.x = e.layerX;
+      mouseDownPoint.y = e.layerY;
+  }
+  loop.start();
+}
+
+canvas.onmouseup = function(e)
+{
+  mouseDown = false;
+  currentBezier.visible = false;
+  var newBezier = new bezier();
+  newBezier.fromX = currentBezier.fromX;
+  newBezier.fromY = currentBezier.fromY;
+  newBezier.toX = currentBezier.toX;
+  newBezier.toY = currentBezier.toY;
+  newBezier.a1x = currentBezier.a1x;
+  newBezier.a1y = currentBezier.a1y;
+  newBezier.a2x = currentBezier.a2x;
+  newBezier.a2y = currentBezier.a2y;
+  loop.add(newBezier);
+  loop.stop();
+}
+
+var mouse = {x: 0, y: 0}
+canvas.onmousemove = function(e){
+  if(e.offsetX) {
+      mouse.x = e.offsetX;
+      mouse.y = e.offsetY;
+  }
+  else if(e.layerX) {
+      mouse.x = e.layerX;
+      mouse.y = e.layerY;
+  }
+  
+  if(mouseDown)
+  {
+    currentBezier.fromX = lastPoint.x;
+    currentBezier.fromY = lastPoint.y;
+    currentBezier.toX = mouseDownPoint.x;
+    currentBezier.toY = mouseDownPoint.y;
+    currentBezier.a1x = lastPoint.x;
+    currentBezier.a1y = lastPoint.y;
+    currentBezier.a2x = mouseDownPoint.x + (mouse.x - mouseDownPoint.x);
+    currentBezier.a2y = mouseDownPoint.y + (mouse.y - mouseDownPoint.y);
+  }
+}
+
+var loop = new Loop(canvas);
+loop.add(background);
+loop.add(currentBezier);
+loop.start();
+
+</script>
+</body>
+</html>
