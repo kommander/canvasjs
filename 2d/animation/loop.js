@@ -1,93 +1,129 @@
+/**
+ * Loop.js
+ * A simple animation loop for HTML5 canvas
+ * Author: Sebastian Herrlinger <sebastian@formzoo.com>
+ * Url: sebastian.formzoo.com
+ * License: MIT
+ */
 function Loop(canvas)
 {
-  this.canvas = canvas;
-  this.context = canvas.getContext('2d');
-  this.running = false;
+  var _canvas = canvas,
+  _context = _canvas.getContext('2d'),
+  _running = false,
   
-  this.tickTime = 0;
-  this.tickDuration = 0;
+  _tickTime = new Date().getTime(),
+  _tickDuration = 0,
   
-  this.startTime = 0;
-  this.statusTime = new Date().getTime();
-  this.frameRate = 30;
-  this.droppedFrames = 0;
-  this.renderedFrames = 0;
-  this.frameCounter = 0;
-  this.fps = 0;
-  this.originalFont = this.context.font;
-  this.infoFont = '800 12px Helvetica, Arial, sans-serif';
-  this.tickInterval = null;
+  _startTime = 0,
+  _statusTime = new Date().getTime(),
+  _frameRate = 30,
+  
+  //Stats
+  _droppedFrames = 0,
+  _renderedFrames = 0,
+  _frameCounter = 0,
+  _fps = 0,
+  _originalFont = _context.font,
+  _infoFont = '800 12px Helvetica, Arial, sans-serif';
+  _tickInterval = null,
+  
+  //The objects to render
+  _objects = [];
   
   this.showInfo = true;
   
-  this.objects = [];
-  
+  /**
+   * Add an Object to the render loop.
+   * An Object has to provide at least a publich "draw" method,
+   * which will be provided with the 2D context,
+   * otherwise it won't be added.
+   */
   this.add = function(object){
-    this.objects.push(object);
-  }
+    if(object.draw)
+      _objects.push(object);
+  };
   
-  this.tick = function(){
-    if(!this.running)
+  /**
+   * The main loop, here the objects are rendered if visible
+   */
+  var _tick = function(){
+    if(!_running)
       return;
     
-    this.tickTime = new Date().getTime();
+    _tickTime = new Date().getTime();
     
-    if(this.tickTime - this.statusTime >= 1000)
+    _context.clearRect(0, 0, _canvas.width, _canvas.height);
+          
+    for(k in _objects)
     {
-      this.fps = Math.floor(this.frameCounter / (this.tickTime - this.statusTime) * 1000);
-      this.renderedFrames += this.frameCounter;
-      this.frameCounter = 0;
-      this.statusTime = this.tickTime;
-      
-    }
-    
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    
-    for(k in this.objects)
-    {
-      if(this.objects[k].visible !== false)
+      if(_objects[k].visible !== false)
       {
-        if(this.objects[k]['animate'] != undefined)
-          this.objects[k].animate();
-        if(this.objects[k]['draw'] != undefined)
-          this.objects[k].draw(this.context);
+        if(_objects[k]['animate'] != undefined)
+          _objects[k].animate();
+        if(_objects[k]['draw'] != undefined)
+          _objects[k].draw(_context);
       }
     }
     
     if(this.showInfo)
     {
-      this.drawInfo();
+      if(_tickTime - _statusTime >= 1000){
+        _fps = Math.floor(_frameCounter / (_tickTime - _statusTime) * 1000);
+        _renderedFrames += _frameCounter;
+        _frameCounter = 0;
+        _statusTime = _tickTime;
+      }
+      _drawInfo();
     }
     
-    this.frameCounter++;
-  }
+    _frameCounter++;
+    
+    _tickInterval = setTimeout(function(c, t){ t.call(c); }, 1000 /  _frameRate - (new Date().getTime() - _tickTime), this, _tick);
+  };
   
-  this.start = function(){
-    this.startTime = new Date().getTime();
-    this.frameCounter = 0;
-    this.running = true;
-    var self = this;
-    if(this.tickInterval == null)
-      this.tickInterval = setInterval(function(){ self.tick(); }, Math.floor(1000 / this.frameRate));
-  }
+  /**
+   * start the loop
+   */ 
+  this.start = function() {
+    _startTime = new Date().getTime();
+    _frameCounter = 0;
+    _running = true;
+    _tickInterval = setTimeout(function(c, t){ t.call(c); }, Math.floor(1000 / _frameRate), this, _tick);
+  };
   
-  this.drawInfo = function()
-  {
-    this.originalFont = this.context.font
-    this.context.font = this.infoFont;
-    this.context.fillStyle = '#009999';
-    var runtime = new Date().getTime() - this.startTime;
-    var infoString = this.objects.length + ' Objects ';
+  /**
+   * stop the loop
+   */
+  this.stop = function() {
+    _running = false;
+    clearInterval(_tickInterval);
+    _tickInterval = null;
+  };
+  
+  /**
+   * set the max desired framerate for the loop
+   */
+  this.frameRate = function(fps) {
+    _frameRate = fps;
+    if(_running){
+      this.stop();
+      this.start();
+    }
+  };
+  
+  /**
+   * Draws the information string on the canvas if showInfo is true
+   */
+  var _drawInfo = function() {
+    _originalFont = _context.font
+    _context.font = _infoFont;
+    _context.fillStyle = '#009999';
+    var runtime = new Date().getTime() - _startTime;
+    var infoString = _objects.length + ' Objects ';
     infoString += Math.floor(runtime / 60000) + 'min. ' + Math.floor(runtime % 60000 / 1000) + ' sec. ';
-    infoString += this.fps + ' FPS';
-    var metrics = this.context.measureText(infoString);
-    this.context.fillText(infoString, this.canvas.width - metrics.width - 5, 10);
-    this.context.font = this.originalFont;
-  }
-  
-  this.stop = function(){
-    this.running = false;
-    clearInterval(this.tickInterval);
-    this.tickInterval = null;
-  }
+    infoString += _fps + ' FPS';
+    var metrics = _context.measureText(infoString);
+    _context.fillText(infoString, _canvas.width - metrics.width - 5, 10);
+    _context.font = _originalFont;
+  }; 
 }
