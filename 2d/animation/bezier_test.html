@@ -1,12 +1,12 @@
 <html>
 <head>
-  <title>canvas 2d bezier animation test</title>
+  <title>Loop.js Bezier Animation Test</title>
   <script type="text/javascript" src="loop.js"></script>
 </head>
 <body>
-<div style="float: left;">
+<h1>Loop.js Bezier Animation Test</h1>
+<h2>Click and drag to draw a bezier curve at max 200 fps</h2>
 <canvas id="testCanvas" width="400" height="400" />
-</div>
 
 <script type="text/javascript">
 var canvas = document.getElementById('testCanvas');
@@ -23,7 +23,7 @@ var background = {
   }
 };
 
-function bezier(){
+function Bezier(){
   this.fromX = 0;
   this.fromY = 0;
   this.toX = 0;
@@ -46,13 +46,11 @@ function bezier(){
   };
 };
 
-var currentBezier = new bezier();
-currentBezier.visible = false;
+var currentBezier = new Bezier();
 
 canvas.onmousedown = function(e)
 {
   mouseDown = true;
-  currentBezier.visible = true;
   
   lastPoint.x = mouseDownPoint.x;
   lastPoint.y = mouseDownPoint.y;
@@ -71,8 +69,7 @@ canvas.onmousedown = function(e)
 canvas.onmouseup = function(e)
 {
   mouseDown = false;
-  currentBezier.visible = false;
-  var newBezier = new bezier();
+  var newBezier = new Bezier();
   newBezier.fromX = currentBezier.fromX;
   newBezier.fromY = currentBezier.fromY;
   newBezier.toX = currentBezier.toX;
@@ -88,12 +85,12 @@ canvas.onmouseup = function(e)
 var mouse = {x: 0, y: 0}
 canvas.onmousemove = function(e){
   if(e.offsetX) {
-      mouse.x = e.offsetX;
-      mouse.y = e.offsetY;
+    mouse.x = e.offsetX;
+    mouse.y = e.offsetY;
   }
   else if(e.layerX) {
-      mouse.x = e.layerX;
-      mouse.y = e.layerY;
+    mouse.x = e.layerX;
+    mouse.y = e.layerY;
   }
   
   if(mouseDown)
@@ -110,6 +107,8 @@ canvas.onmousemove = function(e){
 }
 
 var loop = new Loop(canvas);
+loop.frameRate(200);
+loop.showInfo(true);
 loop.add(background);
 loop.add(currentBezier);
 loop.start();

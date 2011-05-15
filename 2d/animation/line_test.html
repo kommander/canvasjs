@@ -1,17 +1,17 @@
 <html>
 <head>
-  <title>canvas 2d line animation test</title>
+  <title>Loop.js Line Animation Test</title>
   <script type="text/javascript" src="loop.js"></script>
 </head>
 <body>
-<div style="float: left;">
+<h1>Loop.js Line Animation Test</h1>
+<h2>Rendering 400 lines per second, random length and position with max 150 fps</h2>
 <canvas id="testCanvas" width="400" height="400" />
-</div>
 
 <script type="text/javascript">
 var canvas = document.getElementById('testCanvas');
 
-function line()
+function Line()
 {
   this.draw = function(context)
   {
@@ -20,20 +20,21 @@ function line()
     context.moveTo(randRange(0, 400), randRange(0, 400));
     context.lineTo(randRange(0, 400), randRange(0, 400));
     context.stroke();
+    context.closePath();
   };
 }
 
 function randRange(minNum, maxNum) 
 {
-    return (Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum);
+  return (Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum);
 }
 
 var loop = new Loop(canvas);
-loop.frameRate = 60;
-for(var i = 0; i < 200; i++)
-  loop.add(new line());
+loop.frameRate(150);
+loop.showInfo(true);
+for(var i = 0; i < 400; i++)
+  loop.add(new Line());
 loop.start();
-
 </script>
 </body>
 </html>

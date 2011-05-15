@@ -17,6 +17,7 @@ function Loop(canvas)
   _startTime = 0,
   _statusTime = Date.now(),
   _frameRate = 30,
+  _frameRateTick = 1000 / _frameRate,
   
   //Stats
   _droppedFrames = 0,
@@ -25,12 +26,19 @@ function Loop(canvas)
   _fps = 0,
   _originalFont = _context.font,
   _infoFont = '800 12px Helvetica, Arial, sans-serif';
-  _tickInterval = null,
+  _switchObject = {
+    showInfo: function(){}
+  }
   
   //The objects to render
   _objects = [];
   
-  this.showInfo = true;
+  this.showInfo = function(show){
+    if(show)
+      _switchObject.showInfo = _drawInfo;
+    else
+      _switchObject.showInfo = function(){};
+  };
   
   /**
    * Add an Object to the render loop.
@@ -56,29 +64,24 @@ function Loop(canvas)
           
     for(var k = 0; k < _objects.length; k++)
     {
-      if(_objects[k].visible !== false)
-      {
-        if(_objects[k]['animate'] != undefined)
-          _objects[k].animate();
-        if(_objects[k]['draw'] != undefined)
-          _objects[k].draw(_context);
-      }
+      if(_objects[k].animate)
+        _objects[k].animate();
+      _objects[k].draw(_context);
     }
     
-    if(this.showInfo)
-    {
-      if(_tickTime - _statusTime >= 1000){
-        _fps = Math.floor(_frameCounter / (_tickTime - _statusTime) * 1000);
-        _renderedFrames += _frameCounter;
-        _frameCounter = 0;
-        _statusTime = _tickTime;
-      }
-      _drawInfo();
+    if(_tickTime - _statusTime >= 1000){
+      _fps = Math.floor(_frameCounter / (_tickTime - _statusTime) * 1000);
+      _renderedFrames += _frameCounter;
+      _frameCounter = 0;
+      _statusTime = _tickTime;
     }
+      
+    _switchObject.showInfo.call(this);
     
     _frameCounter++;
     
-    _tickInterval = setTimeout(function(c, t){ t.call(c); }, 1000 /  _frameRate - (Date.now() - _tickTime), this, _tick);
+    _tickDuration = (Date.now() - _tickTime);
+    setTimeout(_tick, _frameRateTick - _tickDuration);
   };
   
   /**
@@ -88,7 +91,7 @@ function Loop(canvas)
     _startTime = Date.now();
     _frameCounter = 0;
     _running = true;
-    _tickInterval = setTimeout(function(c, t){ t.call(c); }, Math.floor(1000 / _frameRate), this, _tick);
+    setTimeout(_tick, 1);
   };
   
   /**
@@ -96,8 +99,6 @@ function Loop(canvas)
    */
   this.stop = function() {
     _running = false;
-    clearInterval(_tickInterval);
-    _tickInterval = null;
   };
   
   /**
@@ -105,10 +106,18 @@ function Loop(canvas)
    */
   this.frameRate = function(fps) {
     _frameRate = fps;
+    _frameRateTick = 1000 / _frameRate;
     if(_running){
       this.stop();
       this.start();
     }
+  };
+  
+  /** 
+   * Access the current FPS
+   */
+  this.fps = function(){
+    return _fps;
   };
   
   /**
