@@ -10,6 +10,7 @@ function Loop(canvas)
   var _canvas = canvas,
   _context = _canvas.getContext('2d'),
   _running = false,
+  _ticking = false,
   
   _tickTime = Date.now(),
   _tickDuration = 0,
@@ -31,7 +32,8 @@ function Loop(canvas)
   }
   
   //The objects to render
-  _objects = [];
+  _objects = [],
+  _removeObjects = [];
   
   this.showInfo = function(show){
     if(show)
@@ -71,8 +73,13 @@ function Loop(canvas)
    * Remove an Object from the loop
    */
   this.remove = function(object){
-    if(_objects.indexOf(object) != -1)
-      _objects.splice(_objects.indexOf(object), 1);
+    if(_objects.indexOf(object) != -1){
+      if(!_ticking){
+        _objects.splice(_objects.indexOf(object), 1);
+      } else {
+        _removeObjects.push(object);
+      }
+    }
   };
   
   /**
@@ -82,6 +89,7 @@ function Loop(canvas)
     if(!_running)
       return;
     
+    _ticking = true;
     _tickTime = Date.now();
     
     _context.clearRect(0, 0, _canvas.width, _canvas.height);
@@ -103,6 +111,12 @@ function Loop(canvas)
     _switchObject.showInfo.call(this);
     
     _frameCounter++;
+    
+    _ticking = false;
+    
+    while(_removeObjects.length > 0){
+      this.remove(_removeObjects.shift());
+    }
     
     _tickDuration = (Date.now() - _tickTime);
     setTimeout(_tick, _frameRateTick - _tickDuration);
