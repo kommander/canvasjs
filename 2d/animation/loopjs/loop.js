@@ -75,11 +75,18 @@ function Loop(canvas)
   this.remove = function(object){
     if(_objects.indexOf(object) != -1){
       if(!_ticking){
-        _objects.splice(_objects.indexOf(object), 1);
+        _remove(object);
       } else {
         _removeObjects.push(object);
       }
     }
+  };
+  
+  /**
+   * Do the removal
+   */
+  var _remove = function(object) {
+    _objects.splice(_objects.indexOf(object), 1);
   };
   
   /**
@@ -115,7 +122,7 @@ function Loop(canvas)
     _ticking = false;
     
     while(_removeObjects.length > 0){
-      this.remove(_removeObjects.shift());
+      _remove(_removeObjects.shift());
     }
     
     _tickDuration = (Date.now() - _tickTime);
