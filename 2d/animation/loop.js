@@ -47,8 +47,31 @@ function Loop(canvas)
    * otherwise it won't be added.
    */
   this.add = function(object){
-    if(object.draw)
-      _objects.push(object);
+    if(_validateObject(object))
+      return _objects.push(object);
+  };
+  
+  /**
+   * Add a new object _before_ an existing one
+   */
+  this.addBefore = function(object, before){
+    if(_validateObject(object))
+      _objects.splice(_objects.indexOf(before) - 1, 0, object);
+  };
+  
+  /**
+   * Add a new object _after_ an existing one
+   */
+  this.addAfter = function(object, after){
+    if(_validateObject(object))
+      _objects.splice(_objects.indexOf(after), 0, object);
+  };
+  
+  /**
+   * Remove an Object from the loop
+   */
+  this.remove = function(object){
+    _objects.splice(_objects.indexOf(object), 1);
   };
   
   /**
@@ -118,6 +141,10 @@ function Loop(canvas)
    */
   this.fps = function(){
     return _fps;
+  };
+  
+  var _validateObject = function(object) {
+    return (object.draw);
   };
   
   /**
