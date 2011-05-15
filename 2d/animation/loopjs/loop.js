@@ -55,7 +55,7 @@ function Loop(canvas)
    * Add a new object _before_ an existing one
    */
   this.addBefore = function(object, before){
-    if(_validateObject(object))
+    if(_validateObject(object) && _objects.indexOf(before) != -1)
       _objects.splice(_objects.indexOf(before) - 1, 0, object);
   };
   
@@ -63,7 +63,7 @@ function Loop(canvas)
    * Add a new object _after_ an existing one
    */
   this.addAfter = function(object, after){
-    if(_validateObject(object))
+    if(_validateObject(object) && _objects.indexOf(after) != -1)
       _objects.splice(_objects.indexOf(after), 0, object);
   };
   
@@ -71,7 +71,8 @@ function Loop(canvas)
    * Remove an Object from the loop
    */
   this.remove = function(object){
-    _objects.splice(_objects.indexOf(object), 1);
+    if(_objects.indexOf(object) != -1)
+      _objects.splice(_objects.indexOf(object), 1);
   };
   
   /**
