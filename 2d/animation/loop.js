@@ -11,11 +11,11 @@ function Loop(canvas)
   _context = _canvas.getContext('2d'),
   _running = false,
   
-  _tickTime = new Date().getTime(),
+  _tickTime = Date.now(),
   _tickDuration = 0,
   
   _startTime = 0,
-  _statusTime = new Date().getTime(),
+  _statusTime = Date.now(),
   _frameRate = 30,
   
   //Stats
@@ -50,11 +50,11 @@ function Loop(canvas)
     if(!_running)
       return;
     
-    _tickTime = new Date().getTime();
+    _tickTime = Date.now();
     
     _context.clearRect(0, 0, _canvas.width, _canvas.height);
           
-    for(k in _objects)
+    for(var k = 0; k < _objects.length; k++)
     {
       if(_objects[k].visible !== false)
       {
@@ -78,14 +78,14 @@ function Loop(canvas)
     
     _frameCounter++;
     
-    _tickInterval = setTimeout(function(c, t){ t.call(c); }, 1000 /  _frameRate - (new Date().getTime() - _tickTime), this, _tick);
+    _tickInterval = setTimeout(function(c, t){ t.call(c); }, 1000 /  _frameRate - (Date.now() - _tickTime), this, _tick);
   };
   
   /**
    * start the loop
    */ 
   this.start = function() {
-    _startTime = new Date().getTime();
+    _startTime = Date.now();
     _frameCounter = 0;
     _running = true;
     _tickInterval = setTimeout(function(c, t){ t.call(c); }, Math.floor(1000 / _frameRate), this, _tick);
@@ -118,7 +118,7 @@ function Loop(canvas)
     _originalFont = _context.font
     _context.font = _infoFont;
     _context.fillStyle = '#009999';
-    var runtime = new Date().getTime() - _startTime;
+    var runtime = Date.now() - _startTime;
     var infoString = _objects.length + ' Objects ';
     infoString += Math.floor(runtime / 60000) + 'min. ' + Math.floor(runtime % 60000 / 1000) + ' sec. ';
     infoString += _fps + ' FPS';
