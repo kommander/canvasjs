@@ -30,7 +30,6 @@ var turret = new (function(x, y){
   this.moveTo = function(x, y){
     _target.x = x;
     _target.y = y;
-    console.log(_target.x + '/' + _target.y);
   };
   
   this.animate = function(tickTimeDiff){
@@ -63,11 +62,9 @@ var turret = new (function(x, y){
   
 })(200, 200);
 
-var loop = new Loop(canvas).showInfo(true).add(turret).start();
+var loop = new Loop(canvas).frameRate(60).showInfo(true).add(turret).start();
 
 canvas.addEventListener('click', function(e){
-  for(k in e)
-    console.log('e.' + k);
   turret.moveTo(e.offsetX, e.offsetY);
 }, false);
 
