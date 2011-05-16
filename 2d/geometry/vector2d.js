@@ -59,7 +59,7 @@ function Vector2D(x, y, angle) {
    * p - the geometric point 
    */
   this.angleTo = function(p) {
-    this.angle = Trig.getAngle(this, p);
+    return this.angle = Trig.getAngle(this, p);
   };
   
   /**
@@ -67,6 +67,6 @@ function Vector2D(x, y, angle) {
    * p - the geometric point 
    */
   this.distance = function(p) {
-    Trig.getDistance(this, p);
+    return Trig.getDistance(this, p);
   };
 }

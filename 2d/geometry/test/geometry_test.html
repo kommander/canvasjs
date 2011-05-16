@@ -1,0 +1,19 @@
+<html>
+<head>
+  <title>Geometry Test</title>
+  <script type="text/javascript" src="../trig.js"></script>
+  <script type="text/javascript" src="../vector2d.js"></script>
+</head>
+<body>
+<h1>Geometry Test</h1>
+Distance: <span id="testDistance"></span>
+<script type="text/javascript">
+var v1 = new Vector2D(10, 10, 0);
+var v2 = new Vector2D(50, 50, 0);
+if(v1.distance(v2) == 56.568542494923804)
+  document.getElementById('testDistance').innerHTML = 'success!';
+else
+  document.getElementById('testDistance').innerHTML = '<b>Failed!<b>';
+</script>
+</body>
+</html>
