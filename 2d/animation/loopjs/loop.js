@@ -18,7 +18,7 @@ function Loop(canvas)
   _tickDuration = 0,
   
   _startTime = 0,
-  _statusTime = Date.now(),
+  _statusTime = _lastTickTime,
   _frameRate = 30,
   _frameRateTick = 1000 / _frameRate,
   
