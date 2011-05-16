@@ -27,7 +27,6 @@ function Loop(canvas)
   _renderedFrames = 0,
   _frameCounter = 0,
   _fps = 0,
-  _originalFont = _context.font,
   _infoFont = '800 12px Helvetica, Arial, sans-serif';
   _switchObject = {
     showInfo: function(){}
@@ -185,7 +184,7 @@ function Loop(canvas)
    * Draws the information string on the canvas if showInfo is true
    */
   var _drawInfo = function() {
-    _originalFont = _context.font
+    _context.save();
     _context.font = _infoFont;
     _context.fillStyle = '#009999';
     var runtime = Date.now() - _startTime;
@@ -194,6 +193,6 @@ function Loop(canvas)
     infoString += _fps + ' FPS';
     var metrics = _context.measureText(infoString);
     _context.fillText(infoString, _canvas.width - metrics.width - 5, 10);
-    _context.font = _originalFont;
+    _context.restore();
   }; 
 }
