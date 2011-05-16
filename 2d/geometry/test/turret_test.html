@@ -12,7 +12,8 @@
 
 <script type="text/javascript">
 var canvas = document.getElementById('testCanvas');
-
+for(k in canvas)
+  console.log('canvas.' + k);
 var turret = new (function(x, y){
   var _pos = new Vector2D(x, y, 0),
   _target = new Vector2D(x, y, 0)
@@ -48,9 +49,11 @@ var turret = new (function(x, y){
     _cannon.y = _pos.y;
     _cannon.forward(15);
     
+    context.beginPath();
     context.fillStyle = '#0f0';
     context.arc(_pos.x, _pos.y, 8, 0, Math.PI / 2 * 360, false);
     context.fill();
+    context.closePath();
     context.beginPath();
     context.strokeStyle = '#0f0';
     context.lineWidth = 4;
@@ -65,11 +68,11 @@ var turret = new (function(x, y){
 var loop = new Loop(canvas).frameRate(60).showInfo(true).add(turret).start();
 
 canvas.addEventListener('click', function(e){
-  turret.moveTo(e.offsetX, e.offsetY);
+  turret.moveTo(e.clientX - e.target.offsetLeft, e.clientY - e.target.offsetTop);
 }, false);
 
 canvas.addEventListener('mousemove', function(e){
-  turret.pointTo(e.offsetX, e.offsetY);
+  turret.pointTo(e.clientX - e.target.offsetLeft, e.clientY - e.target.offsetTop);
 }, false);
 
 </script>
