@@ -19,7 +19,7 @@ function Vector2D(x, y, angle) {
    */
   this.move = function(a, m) {
     this.x += Math.cos(Trig.radian(a)) * m;
-    this.x += Math.sin(Trig.radian(a)) * m;
+    this.y += Math.sin(Trig.radian(a)) * m;
   };
    
   /**
@@ -68,5 +68,12 @@ function Vector2D(x, y, angle) {
    */
   this.distance = function(p) {
     return Trig.getDistance(this, p);
+  };
+  
+  /**
+   * Returns a new vector with the same attributes as this
+   */
+  this.copy = function(){
+    return new Vector2D(this.x, this.y, this.angle);
   };
 }

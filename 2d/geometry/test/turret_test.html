@@ -1,0 +1,80 @@
+<html>
+<head>
+  <title>Geometry Turret Test</title>
+  <script type="text/javascript" src="../../animation/loopjs/loop.js"></script>
+  <script type="text/javascript" src="../trig.js"></script>
+  <script type="text/javascript" src="../vector2d.js"></script>
+</head>
+<body>
+<h1>Geometry Turret Test</h1>
+<h2>The turret should point to the mouse and on click move there</h2>
+<canvas id="testCanvas" width="400" height="400" />
+
+<script type="text/javascript">
+var canvas = document.getElementById('testCanvas');
+
+var turret = new (function(x, y){
+  var _pos = new Vector2D(x, y, 0),
+  _target = new Vector2D(x, y, 0)
+  _cannon = new Vector2D(x, y, 0),
+  _moveDistance = 0,
+  _speed = 50;
+  
+  this.visible = true;
+  this.paused = false;
+  
+  this.pointTo = function(x, y){
+    _cannon.angleTo({ x: x, y: y});
+  };
+  
+  this.moveTo = function(x, y){
+    _target.x = x;
+    _target.y = y;
+    console.log(_target.x + '/' + _target.y);
+  };
+  
+  this.animate = function(tickTimeDiff){
+    _pos.angleTo(_target);
+    _moveDistance = tickTimeDiff / 1000 * _speed;
+    if(_pos.distance(_target) > _moveDistance){
+      _pos.forward(_moveDistance);
+    } else {
+      _pos.x = _target.x;
+      _pos.y = _target.y;
+    }
+  };
+  
+  this.draw = function(context){
+    _cannon.x = _pos.x;
+    _cannon.y = _pos.y;
+    _cannon.forward(15);
+    
+    context.fillStyle = '#0f0';
+    context.arc(_pos.x, _pos.y, 8, 0, Math.PI / 2 * 360, false);
+    context.fill();
+    context.beginPath();
+    context.strokeStyle = '#0f0';
+    context.lineWidth = 4;
+    context.moveTo(_pos.x, _pos.y);
+    context.lineTo(_cannon.x, _cannon.y);
+    context.stroke();
+    context.closePath();
+  };
+  
+})(200, 200);
+
+var loop = new Loop(canvas).showInfo(true).add(turret).start();
+
+canvas.addEventListener('click', function(e){
+  for(k in e)
+    console.log('e.' + k);
+  turret.moveTo(e.offsetX, e.offsetY);
+}, false);
+
+canvas.addEventListener('mousemove', function(e){
+  turret.pointTo(e.offsetX, e.offsetY);
+}, false);
+
+</script>
+</body>
+</html>
