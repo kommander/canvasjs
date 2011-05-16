@@ -41,6 +41,7 @@ function Loop(canvas)
       _switchObject.showInfo = _drawInfo;
     else
       _switchObject.showInfo = function(){};
+    return this;
   };
   
   /**
@@ -54,7 +55,8 @@ function Loop(canvas)
    */
   this.add = function(object){
     if(_validateObject(object))
-      return _objects.push(object);
+      _objects.push(object);
+    return this;
   };
   
   /**
@@ -63,6 +65,7 @@ function Loop(canvas)
   this.addBefore = function(object, before){
     if(_validateObject(object) && _objects.indexOf(before) != -1)
       _objects.splice(_objects.indexOf(before) - 1, 0, object);
+    return this;
   };
   
   /**
@@ -71,6 +74,7 @@ function Loop(canvas)
   this.addAfter = function(object, after){
     if(_validateObject(object) && _objects.indexOf(after) != -1)
       _objects.splice(_objects.indexOf(after), 0, object);
+    return this;
   };
   
   /**
@@ -84,6 +88,7 @@ function Loop(canvas)
         _removeObjects.push(object);
       }
     }
+    return this;
   };
   
   /**
@@ -145,6 +150,7 @@ function Loop(canvas)
     _frameCounter = 0;
     _running = true;
     setTimeout(_tick, 1);
+    return this;
   };
   
   /**
@@ -152,6 +158,7 @@ function Loop(canvas)
    */
   this.stop = function() {
     _running = false;
+    return this;
   };
   
   /**
@@ -164,6 +171,7 @@ function Loop(canvas)
       this.stop();
       this.start();
     }
+    return this;
   };
   
   /** 
