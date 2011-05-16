@@ -18,8 +18,8 @@ function Vector2D(x, y, angle) {
    * m - how far to move 
    */
   this.move = function(a, m) {
-    _x += Math.cos(Trig.radian(a)) * m;
-    _y += Math.sin(Trig.radian(a)) * m;
+    this.x += Math.cos(Trig.radian(a)) * m;
+    this.x += Math.sin(Trig.radian(a)) * m;
   };
    
   /**
