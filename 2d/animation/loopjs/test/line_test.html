@@ -13,12 +13,24 @@ var canvas = document.getElementById('testCanvas');
 
 function Line()
 {
+  var _fromX, _fromY, _toX, _toY;
+  
+  this.visible = true;
+  this.paused = false;
+  
+  this.animate = function(){
+    _fromX = randRange(0, 400);
+    _fromY = randRange(0, 400);
+    _toX = randRange(0, 400);
+    _toY = randRange(0, 400);
+  };
+  
   this.draw = function(context)
   {
     context.beginPath();
     context.strokeStyle = '#00ffff';
-    context.moveTo(randRange(0, 400), randRange(0, 400));
-    context.lineTo(randRange(0, 400), randRange(0, 400));
+    context.moveTo(_fromX, _fromY);
+    context.lineTo(_toX, _toY);
     context.stroke();
     context.closePath();
   };

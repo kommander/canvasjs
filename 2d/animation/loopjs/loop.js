@@ -13,6 +13,8 @@ function Loop(canvas)
   _ticking = false,
   
   _tickTime = Date.now(),
+  _lastTickTime = Date.now(),
+  _tickTimeDiff = 0,
   _tickDuration = 0,
   
   _startTime = 0,
@@ -44,7 +46,10 @@ function Loop(canvas)
   
   /**
    * Add an Object to the render loop.
-   * An Object has to provide at least a publich "draw" method,
+   * An Object has to provide at least the publich methods "draw" and "animate",
+   * and the boolean attributes visible and paused.
+   * A visible == true object will neither be animated nor drawn.
+   * A paused == true object will just be drawn but not animated.
    * which will be provided with the 2D context,
    * otherwise it won't be added.
    */
@@ -98,18 +103,22 @@ function Loop(canvas)
     
     _ticking = true;
     _tickTime = Date.now();
+    _tickTimeDiff = _tickTime - _lastTickTime;
+    _lastTickTime = _tickTime;
     
     _context.clearRect(0, 0, _canvas.width, _canvas.height);
           
     for(var k = 0; k < _objects.length; k++)
     {
-      if(_objects[k].animate)
-        _objects[k].animate();
-      _objects[k].draw(_context);
+      if(_objects[k].visible){
+        if(!_objects[k].paused)
+          _objects[k].animate(_tickTimeDiff);
+        _objects[k].draw(_context);
+      }
     }
     
     if(_tickTime - _statusTime >= 1000){
-      _fps = Math.floor(_frameCounter / (_tickTime - _statusTime) * 1000);
+      _fps = Math.round(_frameCounter / (_tickTime - _statusTime) * 1000);
       _renderedFrames += _frameCounter;
       _frameCounter = 0;
       _statusTime = _tickTime;
@@ -166,7 +175,10 @@ function Loop(canvas)
   };
   
   var _validateObject = function(object) {
-    return (object.draw);
+    if(object.draw && object.animate && object.visible != undefined && object.paused != undefined)
+      return true;
+    else
+      throw new Error('Objects must have the public methods draw & animate and the public attributes visible and paused.');
   };
   
   /**

@@ -16,6 +16,9 @@ var lastPoint = {x: 0, y: 0 };
 var mouseDown = false;
 
 var background = {
+  visible: true,
+  paused: false,
+  animate: function(){},
   draw: function(context)
   {
     context.fillStyle = '#666666';
@@ -33,6 +36,9 @@ function Bezier(){
   this.a2x = 0;
   this.a2y = 0;
   this.visible = true;
+  this.paused = false
+  
+  this.animate = function(){};
   
   this.draw = function(context)
   {

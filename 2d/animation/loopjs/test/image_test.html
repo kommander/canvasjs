@@ -6,7 +6,7 @@
 <body>
 <h1>Loop.js Image Animation Test</h1>
 <h2>Rendering 1000 32x32px images per second, randomly positioned with max 200 fps</h2>
-<canvas id="testCanvas" width="400" height="400" />
+<canvas id="testCanvas" width="1024" height="768" />
 <script type="text/javascript">
 var canvas = document.getElementById('testCanvas');
 var context = canvas.getContext('2d');
@@ -28,9 +28,19 @@ img.onload = function(){
 
 function image()
 {
+  var _x, _y;
+  
+  this.visible = true;
+  this.paused = false;
+  
+  this.animate = function(){
+    _x = randRange(0, 992);
+    _y = randRange(0, 734);
+  };
+  
   this.draw = function(context)
   {
-    context.drawImage(img, randRange(0, 368), randRange(0, 368));
+    context.drawImage(img, _x, _y);
   };
 }
 
