@@ -12,8 +12,7 @@
 
 <script type="text/javascript">
 var canvas = document.getElementById('testCanvas');
-for(k in canvas)
-  console.log('canvas.' + k);
+
 var turret = new (function(x, y){
   var _pos = new Vector2D(x, y, 0),
   _target = new Vector2D(x, y, 0)
