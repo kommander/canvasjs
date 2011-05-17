@@ -30,7 +30,9 @@ var SnakeGame = function(canvas, tileSize) {
       
       this.draw = function(context){
         context.beginPath();
-        context.fillStyle = '#9f9f9f';
+        context.fillStyle = '#1B7FF2';
+        context.shadowColor = 'rgba(230, 230, 230, 0.7)';
+        context.shadowBlur = 1;
         context.arc(this.x, this.y, 8, 0, Math.PI / 2 * 360, false);
         context.fill();
         context.closePath();
@@ -92,9 +94,11 @@ var SnakeGame = function(canvas, tileSize) {
    */
   this.draw = function(context){
     context.save();
-    context.fillStyle = '#4B8A08';
-    context.font = '800 12px Helvetica, Arial, sans-serif';
-    context.fillText('Points: ' + _points, 5, 10);
+    context.fillStyle = '#1B7FF2';
+    context.shadowColor = 'rgba(230, 230, 230, 0.7)';
+    context.shadowBlur = 6;
+    context.font = '800 20px Comic Sans, Tahoma';
+    context.fillText('Points: ' + _points, 5, 20);
     context.restore();
     
     //Draw flash messages
@@ -130,13 +134,36 @@ var SnakeGame = function(canvas, tileSize) {
     _snake.paused = true;
   };
   
+  /**
+   * Background
+   */
+  var _background = new (function(context){
+    context.save();
+    var gradient = context.createRadialGradient(context.canvas.width / 2, context.canvas.height / 2, 0, context.canvas.width / 2, context.canvas.height / 2, context.canvas.width);
+    gradient.addColorStop(0, '#EFEFEF');
+    gradient.addColorStop(1, '#666');
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+    var _data = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
+    context.restore();
+    
+    this.visible = true;
+    this.paused = false;
+    this.animate = function(){};
+    this.draw = function(context){
+      context.putImageData(_data, 0, 0);
+    };
+  })(canvas.getContext('2d'));
+  
   //Create the snake and add it
-  var _snake = new Snake(100, 200, 100, 2, 10, 75, _snakeCollided)
-  _loop.add(_snake);
+  var _snake = new Snake(100, 200, 100, 2, 10, 75, _snakeCollided);
+  
   //Add the game itself to the loop for game logic ticks
-  _loop.add(this);
-  _loop.frameRate(60);
-  _loop.showInfo(true);
+  _loop.add(_background)
+    .add(_snake)
+    .add(this)
+    .frameRate(60)
+    .showInfo(true);
   
   /**
    * Starts the game
@@ -251,7 +278,7 @@ var Snake = function(x, y, length, direction, thickness, speed, collisionCallbac
   _thickness = 0,
   _halfThickness = 0,
   _collisionCallback = collisionCallback,
-  _dashed = true;
+  _dashed = false;
   
   /**
    * Flip the dashed linesstyle on and off
