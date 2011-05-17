@@ -88,6 +88,10 @@ var SnakeGame = function(canvas, tileSize) {
     _points = 0;
     _snake.reset(100, 200, 100, 2, 10, 75);
     _snake.paused = false;
+    //Remove crunchies
+    for(var i = 0; i < _onlineCrunchies.length; i++)
+      _loop.remove(_onlineCrunchies[i]);
+    _onlineCrunchies = [];
     _crunchyInterval = setInterval(_crunchy, 3000);
     _loop.start();
   };
