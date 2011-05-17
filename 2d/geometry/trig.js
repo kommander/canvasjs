@@ -34,7 +34,14 @@ var Trig = new (function() {
    * Get the distance from two given points 
    */
   this.getDistance = function(a, b) {
-    return Math.sqrt(Math.pow(b.y - a.y, 2) + Math.pow(b.x - a.x, 2));
+    return Math.sqrt(this.getSquaredDistance(a, b));
+  };
+  
+  /**
+   * Get the distance without applying square root for comparison
+   */
+  this.getSquaredDistance = function(a, b) {
+    return Math.pow(b.y - a.y, 2) + Math.pow(b.x - a.x, 2);
   };
   
 })();

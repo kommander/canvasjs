@@ -71,6 +71,13 @@ function Vector2D(x, y, angle) {
   };
   
   /**
+   * Get the distance without applying square root for comparison
+   */
+  this.comparableDistance = function(p) {
+    return Trig.getSquaredDistance(this, p);
+  };
+  
+  /**
    * Returns a new vector with the same attributes as this
    */
   this.copy = function(){
