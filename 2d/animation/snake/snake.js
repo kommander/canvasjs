@@ -7,6 +7,7 @@ var SnakeGame = function(canvas, tileSize) {
   _points = 0,
   _paused = false,
   _this = this,
+  //The crunchies that can be eaten by the snake, extendable
   _crunchies = [
     function(x, y){
       this.x = x;
@@ -43,6 +44,9 @@ var SnakeGame = function(canvas, tileSize) {
   this.visible = true;
   this.paused = false;
   
+  /**
+   * Checks for canvas boundaries and crunchy hits
+   */
   this.animate = function(tickTimeDiff){
     if(_snake.pos().x < 0 || _snake.pos().x > canvas.width || _snake.pos().y < 0 || _snake.pos().y > canvas.height)
       _snakeCollided();
@@ -59,6 +63,9 @@ var SnakeGame = function(canvas, tileSize) {
     }
   };
   
+  /**
+   * Draws the points
+   */
   this.draw = function(context){
     context.save();
     context.fillStyle = '#4B8A08';
@@ -67,23 +74,34 @@ var SnakeGame = function(canvas, tileSize) {
     context.restore();
   };
   
+  /**
+   * Randomly adds new crunchies 
+   */
   var _crunchy = function(){
     var newCrunchy = new _crunchies[0](_randRange(0, canvas.width), _randRange(0, canvas.height));
     _onlineCrunchies.push(newCrunchy);
     _loop.addBefore(newCrunchy, _snake);
   };
   
+  /**
+   * The callback for the Snake object when it collided
+   */
   var _snakeCollided = function(){
     clearInterval(_crunchyInterval);
     _snake.paused = true;
   };
   
+  //Create the snake and add it
   var _snake = new Snake(100, 200, 100, 2, 10, 75, _snakeCollided)
   _loop.add(_snake);
+  //Add the game itself to the loop for game logic ticks
   _loop.add(this);
   _loop.frameRate(60);
   _loop.showInfo(true);
-   
+  
+  /**
+   * Starts the game
+   */
   this.start = function(){
     _points = 0;
     _snake.reset(100, 200, 100, 2, 10, 75);
@@ -96,24 +114,35 @@ var SnakeGame = function(canvas, tileSize) {
     _loop.start();
   };
   
+  /**
+   * Stops the game
+   */
   this.stop = function(){
     clearInterval(_crunchyInterval);
     _loop.stop();
   };
   
+  /**
+   * Pauses the game
+   */
   this.pause = function(){
     clearInterval(_crunchyInterval);
     _paused = true;
     _snake.paused = true;
   };
   
+  /**
+   * Resumes the game
+   */
   this.resume = function(){
     _crunchyInterval = setInterval(_crunchy, 3000);
     _paused = false;
     _snake.paused = false;
   };
   
-       
+  /**
+   * Key control input handling
+   */   
   var _keyHandler = function(evt) {
     switch(evt.keyCode) {
       // A
@@ -151,6 +180,9 @@ var SnakeGame = function(canvas, tileSize) {
     };
   };
   
+  /**
+   * Get a random number between a min and a max number
+   */
   var _randRange = function(minNum, maxNum) 
   {
     return (Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum);
@@ -177,6 +209,9 @@ var Snake = function(x, y, length, direction, thickness, speed, collisionCallbac
   _halfThickness = 0;
   _collisionCallback = collisionCallback;
   
+  /**
+   * Resets the snakes position, length, direction, thickness and speed
+   */
   this.reset = function(_x, _y, length, direction, thickness, speed){
     _nodes = [{ d: direction, x: x, y: y }];
     _length = length;
@@ -186,30 +221,45 @@ var Snake = function(x, y, length, direction, thickness, speed, collisionCallbac
     _speed = speed;
   };
   
+  /**
+   * Get/Set the length of the snake
+   */
   this.length = function(length){
     if(length)
       _length = length;
     return _length;
   };
   
+  /**
+   * Get/Set the speed of the snake
+   */
   this.speed = function(speed){
     if(speed)
       _speed = speed;
     return _speed;
   };
   
+  /**
+   * Get the thickness
+   */
   this.thickness = function(){
     return _thickness;
   }
   
+  /**
+   * Get the current position
+   */
   this.pos = function(){
     return _nodes[0];
   };
   
+  //Loop object attributes
   this.visible = true;
   this.paused = false;
-  this.renderContext = this;
   
+  /**
+   * Moves the snake forward and checks for collisions
+   */
   this.animate = function(tickTimeDiff){
     _movedDistance = tickTimeDiff / 1000 * _speed; 
     switch(_currentDirection){
@@ -238,32 +288,35 @@ var Snake = function(x, y, length, direction, thickness, speed, collisionCallbac
     }
   };
   
+  /**
+   * Checks if n0 collides with the line between n1 and n2
+   */
   var _checkCollision = function(n0, n1, n2) {
     switch(_currentDirection){
       //top
       case 0:
-        if(n1.y != n2.y || !((n0.x > n1.x &&n0.x < n2.x) || (n0.x < n1.x &&n0.x > n2.x)))
+        if(n1.y != n2.y || !((n0.x > n1.x &&n0.x < n2.x) || (n0.x < n1.x && n0.x > n2.x)))
           break;
         if(Math.abs(n0.y - n1.y) < _movedDistance)
           _collided.call(this);
         break;
       //bottom
       case 1:
-        if(n1.y != n2.y || !((n0.x > n1.x &&n0.x < n2.x) || (n0.x < n1.x &&n0.x > n2.x)))
+        if(n1.y != n2.y || !((n0.x > n1.x &&n0.x < n2.x) || (n0.x < n1.x && n0.x > n2.x)))
           break;
         if(Math.abs(n0.y - n1.y) < _movedDistance)
           _collided.call(this);
         break;
       //left
       case 2:
-        if(n1.x != n2.x || !((n0.y > n1.y &&n0.y < n2.y) || (n0.y < n1.y &&n0.y > n2.y)))
+        if(n1.x != n2.x || !((n0.y > n1.y &&n0.y < n2.y) || (n0.y < n1.y && n0.y > n2.y)))
           break;
         if(Math.abs(n0.x - n1.x) < _movedDistance)
           _collided.call(this);
         break;
       //right
       case 3:
-        if(n1.x != n2.x || !((n0.y > n1.y &&n0.y < n2.y) || (n0.y < n1.y &&n0.y > n2.y)))
+        if(n1.x != n2.x || !((n0.y > n1.y &&n0.y < n2.y) || (n0.y < n1.y && n0.y > n2.y)))
           break;
         if(Math.abs(n0.x - n1.x) < _movedDistance)
           _collided.call(this);
