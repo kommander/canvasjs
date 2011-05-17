@@ -29,13 +29,15 @@ var SnakeGame = function(canvas, tileSize) {
       this.animate = function(){};
       
       this.draw = function(context){
+        context.save();
         context.beginPath();
         context.fillStyle = '#1B7FF2';
         context.shadowColor = 'rgba(230, 230, 230, 0.7)';
-        context.shadowBlur = 1;
+        context.shadowBlur = 2;
         context.arc(this.x, this.y, 8, 0, Math.PI / 2 * 360, false);
         context.fill();
         context.closePath();
+        context.restore();
       };
     }
   ],
@@ -73,7 +75,7 @@ var SnakeGame = function(canvas, tileSize) {
           _onlineCrunchies[i].action(_snake);
           _points += _onlineCrunchies[i].points(_snake);
           _loop.remove(_onlineCrunchies[i]);
-          _flashMessage(_onlineCrunchies[i].points(_snake), '#09FF00');
+          _flashMessage(_onlineCrunchies[i].points(_snake), '#fff');
           _onlineCrunchies.splice(i, 1);
           break;
         }
@@ -94,9 +96,9 @@ var SnakeGame = function(canvas, tileSize) {
    */
   this.draw = function(context){
     context.save();
-    context.fillStyle = '#1B7FF2';
-    context.shadowColor = 'rgba(230, 230, 230, 0.7)';
-    context.shadowBlur = 6;
+    context.fillStyle = '#fff';
+    context.shadowColor = 'rgba(30, 30, 30, 0.7)';
+    context.shadowBlur = 3;
     context.font = '800 20px Comic Sans, Tahoma';
     context.fillText('Points: ' + _points, 5, 20);
     context.restore();
