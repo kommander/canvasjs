@@ -16,6 +16,7 @@ function Loop(canvas)
   _lastTickTime = Date.now(),
   _tickTimeDiff = 0,
   _tickDuration = 0,
+  _tickTimeout = 0x0,
   
   _startTime = 0,
   _statusTime = _lastTickTime,
@@ -24,7 +25,6 @@ function Loop(canvas)
   
   //Stats
   _droppedFrames = 0,
-  _renderedFrames = 0,
   _frameCounter = 0,
   _fps = 0,
   _infoFont = '800 12px Helvetica, Arial, sans-serif';
@@ -116,14 +116,13 @@ function Loop(canvas)
     {
       if(_objects[k].visible){
         if(!_objects[k].paused)
-          _objects[k].animate(_tickTimeDiff);
-        _objects[k].draw(_context);
+          _objects[k].animate.call(_objects[k], _tickTimeDiff);
+        _objects[k].draw.call(_objects[k], _context);
       }
     }
     
     if(_tickTime - _statusTime >= 1000){
       _fps = Math.round(_frameCounter / (_tickTime - _statusTime) * 1000);
-      _renderedFrames += _frameCounter;
       _frameCounter = 0;
       _statusTime = _tickTime;
     }
@@ -139,7 +138,7 @@ function Loop(canvas)
     }
     
     _tickDuration = (Date.now() - _tickTime);
-    setTimeout(_tick, _frameRateTick - _tickDuration);
+    _tickTimeout = setTimeout(_tick, _frameRateTick - _tickDuration);
   };
   
   /**
@@ -149,7 +148,7 @@ function Loop(canvas)
     _startTime = Date.now();
     _frameCounter = 0;
     _running = true;
-    setTimeout(_tick, 1);
+    _tickTimeout = setTimeout(_tick, 1);
     return this;
   };
   
@@ -157,6 +156,7 @@ function Loop(canvas)
    * stop the loop
    */
   this.stop = function() {
+    clearTimeout(_tickTimeout);
     _running = false;
     return this;
   };
