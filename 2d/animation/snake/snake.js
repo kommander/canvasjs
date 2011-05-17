@@ -16,7 +16,9 @@ var SnakeGame = function(canvas, tileSize) {
       this.paused = false;
       this.visible = true;
       
-      this.points = 25;
+      this.points = function(snake){
+        return Math.round(snake.speed() * 0.3);
+      };
       
       this.action = function(snake){
         snake.length(snake.length() + 50);
@@ -49,7 +51,7 @@ var SnakeGame = function(canvas, tileSize) {
     for(var i = 0; i < _onlineCrunchies.length; i++){
       if(Math.sqrt(Math.pow(_onlineCrunchies[i].y - _snake.pos().y, 2) + Math.pow(_onlineCrunchies[i].x - _snake.pos().x, 2)) < _snake.thickness() + 4){
         _onlineCrunchies[i].action(_snake);
-        _points += _onlineCrunchies[i].points;
+        _points += _onlineCrunchies[i].points(_snake);
         _loop.remove(_onlineCrunchies[i]);
         _onlineCrunchies.splice(i, 1);
         break;
@@ -76,7 +78,7 @@ var SnakeGame = function(canvas, tileSize) {
     _snake.paused = true;
   };
   
-  var _snake = new Snake(100, 200, 100, 2, 10, _snakeCollided)
+  var _snake = new Snake(100, 200, 100, 2, 10, 75, _snakeCollided)
   _loop.add(_snake);
   _loop.add(this);
   _loop.frameRate(60);
@@ -84,7 +86,7 @@ var SnakeGame = function(canvas, tileSize) {
    
   this.start = function(){
     _points = 0;
-    _snake.reset(100, 200, 100, 2, 10);
+    _snake.reset(100, 200, 100, 2, 10, 75);
     _snake.paused = false;
     _crunchyInterval = setInterval(_crunchy, 3000);
     _loop.start();
@@ -158,23 +160,26 @@ var SnakeGame = function(canvas, tileSize) {
 /**
  * The Snake itself
  */
-var Snake = function(x, y, length, direction, thickness, collisionCallback){
+var Snake = function(x, y, length, direction, thickness, speed, collisionCallback){
   var _nodes = [],
   _nodeIndex = 1,  
   _length = 0,
   _drawn = 0,
   _rest = 0,
   _currentDirection = -1,
-  _speed = 75,
+  _speed = 0,
   _movedDistance = 0,
-  _thickness = thickness,
-  _halfThickness = thickness / 2;
+  _thickness = 0,
+  _halfThickness = 0;
   _collisionCallback = collisionCallback;
   
-  this.reset = function(_x, _y, length, direction){
+  this.reset = function(_x, _y, length, direction, thickness, speed){
     _nodes = [{ d: direction, x: x, y: y }];
     _length = length;
     _currentDirection = direction;
+    _thickness = thickness;
+    _halfThickness = thickness / 2;
+    _speed = speed;
   };
   
   this.length = function(length){
@@ -326,6 +331,6 @@ var Snake = function(x, y, length, direction, thickness, collisionCallback){
     _currentDirection = _nodes[0].d = direction;
   };
   
-  this.reset(x, y, length, direction);
+  this.reset(x, y, length, direction, thickness, speed);
 };
     
