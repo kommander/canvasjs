@@ -374,6 +374,8 @@ var Snake = function(x, y, length, direction, thickness, speed, collisionCallbac
    * Checks if n0 collides with the line between n1 and n2
    */
   var _checkCollision = function(n0, n1, n2) {
+    if(this.paused)
+      return;
     switch(_currentDirection){
       //top
       case 0:
