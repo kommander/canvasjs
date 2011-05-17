@@ -39,26 +39,50 @@ var SnakeGame = function(canvas, tileSize) {
   ],
   _onlineCrunchies = [],
   _crunchyInterval = 0x0,
-  _points = 0;
+  _points = 0,
+  _flashMessages = [],
+  _flashMessageTime = 1000;
   
   this.visible = true;
   this.paused = false;
   
   /**
-   * Checks for canvas boundaries and crunchy hits
+   * Add a flash message for rendering
+   */
+  var _flashMessage = function(msg, color){
+    _flashMessages.push({
+      msg: msg,
+      color: color,
+      time: 0
+    });
+  };
+  
+  /**
+   * Checks for canvas boundaries, crunchy hits and flash messages
    */
   this.animate = function(tickTimeDiff){
-    if(_snake.pos().x < 0 || _snake.pos().x > canvas.width || _snake.pos().y < 0 || _snake.pos().y > canvas.height)
-      _snakeCollided();
+    if(!_snake.paused){
+      if(_snake.pos().x < 0 || _snake.pos().x > canvas.width || _snake.pos().y < 0 || _snake.pos().y > canvas.height)
+        _snakeCollided();
+      
+      //Check Crunchies (_onlineCrunchies)
+      for(var i = 0; i < _onlineCrunchies.length; i++){
+        if(Math.sqrt(Math.pow(_onlineCrunchies[i].y - _snake.pos().y, 2) + Math.pow(_onlineCrunchies[i].x - _snake.pos().x, 2)) < _snake.thickness() + 4){
+          _onlineCrunchies[i].action(_snake);
+          _points += _onlineCrunchies[i].points(_snake);
+          _loop.remove(_onlineCrunchies[i]);
+          _flashMessage(_onlineCrunchies[i].points(_snake), '#09FF00');
+          _onlineCrunchies.splice(i, 1);
+          break;
+        }
+      }
+    };
     
-    //Check Crunchies (_onlineCrunchies)
-    for(var i = 0; i < _onlineCrunchies.length; i++){
-      if(Math.sqrt(Math.pow(_onlineCrunchies[i].y - _snake.pos().y, 2) + Math.pow(_onlineCrunchies[i].x - _snake.pos().x, 2)) < _snake.thickness() + 4){
-        _onlineCrunchies[i].action(_snake);
-        _points += _onlineCrunchies[i].points(_snake);
-        _loop.remove(_onlineCrunchies[i]);
-        _onlineCrunchies.splice(i, 1);
-        break;
+    //Animate flash messages
+    for(var i = 0; i < _flashMessages.length; i++){
+      _flashMessages[i].time += tickTimeDiff;
+      if(_flashMessages[i].time >= _flashMessageTime){
+        _flashMessages.splice(i, 1);
       }
     }
   };
@@ -72,6 +96,20 @@ var SnakeGame = function(canvas, tileSize) {
     context.font = '800 12px Helvetica, Arial, sans-serif';
     context.fillText('Points: ' + _points, 5, 10);
     context.restore();
+    
+    //Draw flash messages
+    for(var i = 0; i < _flashMessages.length; i++){
+      context.save();
+      context.globalAlpha = 1.5 - _flashMessages[i].time * 0.0015;
+      context.fillStyle = _flashMessages[i].color;
+      context.shadowColor = 'rgba(200, 200, 200, ' + context.globalAlpha + ')';
+      context.shadowBlur = 10;
+      context.font = '800 50px Comic Sans, Tahoma';
+      context.translate(context.canvas.width / 2, context.canvas.width / 2 - _flashMessages[i].time * 0.15);
+      context.textAlign = 'center';
+      context.fillText(_flashMessages[i].msg, 0, 0);
+      context.restore();
+    }
   };
   
   /**
@@ -87,6 +125,7 @@ var SnakeGame = function(canvas, tileSize) {
    * The callback for the Snake object when it collided
    */
   var _snakeCollided = function(){
+    _flashMessage('CRASH!', '#FF4400');
     clearInterval(_crunchyInterval);
     _snake.paused = true;
   };
