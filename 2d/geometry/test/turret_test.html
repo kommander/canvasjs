@@ -18,6 +18,7 @@ var turret = new (function(x, y){
   var _pos = new Vector2D(x, y, 0),
   _target = new Vector2D(x, y, 0)
   _cannon = new Vector2D(x, y, 0),
+  _cannonEnd = null;
   _moveDistance = 0,
   _speed = 50;
   
@@ -47,7 +48,8 @@ var turret = new (function(x, y){
   this.draw = function(context){
     _cannon.x = _pos.x;
     _cannon.y = _pos.y;
-    _cannon.forward(15);
+    _cannonEnd = _cannon.copy();
+    _cannonEnd.forward(15);
     
     context.beginPath();
     context.fillStyle = '#0f0';
@@ -58,7 +60,7 @@ var turret = new (function(x, y){
     context.strokeStyle = '#0f0';
     context.lineWidth = 4;
     context.moveTo(_pos.x, _pos.y);
-    context.lineTo(_cannon.x, _cannon.y);
+    context.lineTo(_cannonEnd.x, _cannonEnd.y);
     context.stroke();
     context.closePath();
   };
