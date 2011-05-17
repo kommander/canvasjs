@@ -17,6 +17,9 @@ var SnakeGame = function(canvas, tileSize) {
       this.paused = false;
       this.visible = true;
       
+      var _size = 16,
+      _blur = 10;
+      
       this.points = function(snake){
         return Math.round(snake.speed() * 0.3);
       };
@@ -26,15 +29,20 @@ var SnakeGame = function(canvas, tileSize) {
         snake.speed(snake.speed() + 1);
       };
       
-      this.animate = function(){};
+      this.animate = function(tickTimeDiff){
+        if(_size > 8){
+          _size -= 0.2;
+          _blur -= 0.1;
+        }
+      };
       
       this.draw = function(context){
         context.save();
         context.beginPath();
         context.fillStyle = '#1B7FF2';
         context.shadowColor = 'rgba(230, 230, 230, 0.7)';
-        context.shadowBlur = 2;
-        context.arc(this.x, this.y, 8, 0, Math.PI / 2 * 360, false);
+        context.shadowBlur = _blur;
+        context.arc(this.x, this.y, _size, 0, Math.PI / 2 * 360, false);
         context.fill();
         context.closePath();
         context.restore();
@@ -379,28 +387,28 @@ var Snake = function(x, y, length, direction, thickness, speed, collisionCallbac
     switch(_currentDirection){
       //top
       case 0:
-        if(n1.y != n2.y || !((n0.x > n1.x &&n0.x < n2.x) || (n0.x < n1.x && n0.x > n2.x)))
+        if(n1.y != n2.y || !((n0.x > n1.x && n0.x < n2.x) || (n0.x < n1.x && n0.x > n2.x)))
           break;
         if(Math.abs(n0.y - n1.y) < _movedDistance)
           _collided.call(this);
         break;
       //bottom
       case 1:
-        if(n1.y != n2.y || !((n0.x > n1.x &&n0.x < n2.x) || (n0.x < n1.x && n0.x > n2.x)))
+        if(n1.y != n2.y || !((n0.x > n1.x && n0.x < n2.x) || (n0.x < n1.x && n0.x > n2.x)))
           break;
         if(Math.abs(n0.y - n1.y) < _movedDistance)
           _collided.call(this);
         break;
       //left
       case 2:
-        if(n1.x != n2.x || !((n0.y > n1.y &&n0.y < n2.y) || (n0.y < n1.y && n0.y > n2.y)))
+        if(n1.x != n2.x || !((n0.y > n1.y && n0.y < n2.y) || (n0.y < n1.y && n0.y > n2.y)))
           break;
         if(Math.abs(n0.x - n1.x) < _movedDistance)
           _collided.call(this);
         break;
       //right
       case 3:
-        if(n1.x != n2.x || !((n0.y > n1.y &&n0.y < n2.y) || (n0.y < n1.y && n0.y > n2.y)))
+        if(n1.x != n2.x || !((n0.y > n1.y && n0.y < n2.y) || (n0.y < n1.y && n0.y > n2.y)))
           break;
         if(Math.abs(n0.x - n1.x) < _movedDistance)
           _collided.call(this);
