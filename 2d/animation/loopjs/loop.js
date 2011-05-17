@@ -64,7 +64,7 @@ function Loop(canvas)
    */
   this.addBefore = function(object, before){
     if(_validateObject(object) && _objects.indexOf(before) != -1)
-      _objects.splice(_objects.indexOf(before) - 1, 0, object);
+      _objects.splice(_objects.indexOf(before), 0, object);
     return this;
   };
   
@@ -73,7 +73,7 @@ function Loop(canvas)
    */
   this.addAfter = function(object, after){
     if(_validateObject(object) && _objects.indexOf(after) != -1)
-      _objects.splice(_objects.indexOf(after), 0, object);
+      _objects.splice(_objects.indexOf(after) + 1, 0, object);
     return this;
   };
   
