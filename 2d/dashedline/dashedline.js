@@ -1,13 +1,13 @@
 /**
  * A dashed line implementation for the HTML5 2D canvas
- * based on the AS3 implementation from github.com/herrlinger/as3components
+ * based on the AS3 implementation from github.com/kommander/as3components
  *
  * This implementation extends the CanvasRenderingContext2D,
  * adds the dashed line functionality directly to it
  * and tries to follow the actual W3 HTML5 specs from http://dev.w3.org/html5/2dcontext/
  * 
- * @author Sebastian Herrlinger <sebastian@formzoo.com>
- * @url sebastian.formzoo.com
+ * author Sebastian Herrlinger <sebastian@formzoo.com>
+ * url sebastian.formzoo.com
  */
 CanvasRenderingContext2D.prototype.superBeginPath = CanvasRenderingContext2D.prototype.beginPath;
 CanvasRenderingContext2D.prototype.beginPath = function()
@@ -90,7 +90,7 @@ CanvasRenderingContext2D.prototype.dashedLineTo = function (x, y)
           this.lengthStartIndex = 0;
           this.remainingDist = 0;
         } else {
-          this.remainingDist = Math.sqrt(Math.pow((x - this.currentMoveX),2) + Math.pow((y - this.currentMoveY), 2)); 
+          this.remainingDist = this.distance(this.currentMoveX, this.currentMoveY, x, y); 
           this.lengthStartIndex = i;
           break outerLoop;
         }
@@ -305,10 +305,10 @@ CanvasRenderingContext2D.prototype.fill = function()
 {
   this.superBeginPath();
   
-  for(sk in this.subPaths)
+  for(var sk = 0; sk < this.subPaths.length; sk++)
   {
     
-    for(k in this.subPaths[sk])
+    for(var k = 0; k < this.subPaths[sk].length; k++)
     {
       switch(this.subPaths[sk][k][0])
       {
@@ -336,7 +336,7 @@ CanvasRenderingContext2D.prototype.stroke = function()
 {
   this.superBeginPath();
   
-  for(sk in this.subPaths)
+  for(var sk = 0; sk < this.subPaths.length; sk++)
   {
     if(this.dashed)
     {
@@ -346,7 +346,7 @@ CanvasRenderingContext2D.prototype.stroke = function()
         this.currentMoveY = this.subPaths[sk][0][2];
       }
       
-      for(k in this.subPaths[sk])
+      for(var k = 0; k < this.subPaths[sk].length; k++)
       {
         switch(this.subPaths[sk][k][0])
         {
@@ -385,7 +385,7 @@ CanvasRenderingContext2D.prototype.stroke = function()
       }
       
     } else {
-      for(k in this.subPaths[sk])
+      for(var k = 0; k < this.subPaths[sk].length; k++)
         switch(this.subPaths[sk][k][0])
         {
           case 'c':
