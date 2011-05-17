@@ -145,6 +145,10 @@ var SnakeGame = function(canvas, tileSize) {
    */   
   var _keyHandler = function(evt) {
     switch(evt.keyCode) {
+      // L
+      case 76:
+        _snake.dashed(!_snake.dashed());
+        break;
       // A
       case 65:
         _snake.move(2);
@@ -206,8 +210,18 @@ var Snake = function(x, y, length, direction, thickness, speed, collisionCallbac
   _speed = 0,
   _movedDistance = 0,
   _thickness = 0,
-  _halfThickness = 0;
-  _collisionCallback = collisionCallback;
+  _halfThickness = 0,
+  _collisionCallback = collisionCallback,
+  _dashed = true;
+  
+  /**
+   * Flip the dashed linesstyle on and off
+   */
+  this.dashed = function(dashed){
+    if(dashed != undefined)
+      _dashed = dashed;
+    return _dashed;
+  };
   
   /**
    * Resets the snakes position, length, direction, thickness and speed
@@ -332,7 +346,10 @@ var Snake = function(x, y, length, direction, thickness, speed, collisionCallbac
     _rest = _length;
     _nodeIndex = 0;
     
+    context.save();
     context.beginPath();
+    context.dashed = _dashed;
+    context.dashPattern = [12, 8];
     context.strokeStyle = '#222';
     context.lineWidth = _thickness;
     context.lineCap = 'round';
@@ -377,11 +394,11 @@ var Snake = function(x, y, length, direction, thickness, speed, collisionCallbac
     
     context.stroke();
     context.closePath();
-    
+    context.restore();
   };
   
   this.move = function(direction){
-    if((_currentDirection == 0 && direction == 1) || (_currentDirection == 1 && direction == 0)
+    if(this.paused || (_currentDirection == 0 && direction == 1) || (_currentDirection == 1 && direction == 0)
       || (_currentDirection == 2 && direction == 3) || (_currentDirection == 3 && direction == 2))
       return;
     _nodes.splice(1, 0, { d: _currentDirection, x: _nodes[0].x, y: _nodes[0].y});
