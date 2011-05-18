@@ -225,19 +225,23 @@ var SnakeGame = function(canvas, tileSize) {
       case 76:
         _snake.dashed(!_snake.dashed());
         break;
-      // A
+      // A, left
+      case 37:
       case 65:
         _snake.move(2);
         break;
-      // w
+      // w, up
+      case 38:
       case 87:
         _snake.move(0);
         break;
-      // S
+      // S, down
+      case 40:
       case 83:
         _snake.move(1);
         break;
-      // D
+      // D, right
+      case 39:
       case 68:
         _snake.move(3);
         break;
@@ -257,7 +261,9 @@ var SnakeGame = function(canvas, tileSize) {
         else
           _this.pause();
         break;
-    };
+    }
+    evt.stopPropagation();
+    evt.stopImmediatePropagation();
   };
   
   /**
