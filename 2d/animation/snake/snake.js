@@ -61,7 +61,8 @@ var SnakeGame = function(canvas, tileSize) {
   _crunchyInterval = 0x0,
   _points = 0,
   _flashMessages = [],
-  _flashMessageTime = 1000;
+  _flashMessageTime = 1000,
+  _drawTextArgs = null;
   
   this.visible = true;
   this.paused = false;
@@ -111,28 +112,69 @@ var SnakeGame = function(canvas, tileSize) {
    * Draws the points
    */
   this.draw = function(context){
-    context.save();
-    context.fillStyle = '#fff';
-    context.shadowColor = 'rgba(30, 30, 30, 0.7)';
-    context.shadowBlur = 3;
-    context.font = '800 20px Comic Sans, Tahoma';
-    context.fillText('Points: ' + _points, 5, 20);
-    context.restore();
+    _drawText(
+      context,
+      'Points: ' + _points,
+      5,
+      20,
+      '800 20px Comic Sans, Tahoma',
+      '#fff',
+      'left',
+      1,
+      'rgba(30, 30, 30, 0.7)',
+      2
+    );
+    
+    //Pause Message
+    if(_paused){
+      _drawText(
+        context,
+        'PAUSED',
+        context.canvas.width / 2,
+        context.canvas.width / 2,
+        '800 50px Comic Sans, Tahoma',
+        '#1B7FF2',
+        'center',
+        1,
+        'rgba(255, 255, 255, 0.8)',
+        5
+      );
+    }
     
     //Draw flash messages
     for(var i = 0; i < _flashMessages.length; i++){
-      context.save();
-      context.globalAlpha = 1.5 - _flashMessages[i].time * 0.0015;
-      context.fillStyle = _flashMessages[i].color;
-      context.shadowColor = 'rgba(200, 200, 200, ' + context.globalAlpha + ')';
-      context.shadowBlur = 10;
-      context.font = '800 50px Comic Sans, Tahoma';
-      context.translate(context.canvas.width / 2, context.canvas.width / 2 - _flashMessages[i].time * 0.15);
-      context.textAlign = 'center';
-      context.fillText(_flashMessages[i].msg, 0, 0);
-      context.restore();
+      _drawText(
+        context,
+        _flashMessages[i].msg,
+        context.canvas.width / 2,
+        context.canvas.width / 2 - _flashMessages[i].time * 0.15,
+        '800 50px Comic Sans, Tahoma',
+        _flashMessages[i].color,
+        'center',
+        1.5 - _flashMessages[i].time * 0.0015,
+        'rgba(200, 200, 200, ' + context.globalAlpha + ')',
+        10
+      );
     }
   };
+  
+  /**
+   * Draw some text to the canvas
+   * Arguments [context, msg, x, y, font, fillStyle, textAlign, alpha, shadowColor, shadowBlur]
+   */
+  var _drawText = function(){
+    _drawTextArgs = arguments;
+    _drawTextArgs[0].save();
+    _drawTextArgs[0].globalAlpha = _drawTextArgs[7];
+    _drawTextArgs[0].fillStyle = _drawTextArgs[5];
+    _drawTextArgs[0].shadowColor = _drawTextArgs[8];
+    _drawTextArgs[0].shadowBlur = _drawTextArgs[9];
+    _drawTextArgs[0].font = _drawTextArgs[4];
+    _drawTextArgs[0].translate(_drawTextArgs[2], _drawTextArgs[3]);
+    _drawTextArgs[0].textAlign = _drawTextArgs[6];
+    _drawTextArgs[0].fillText(_drawTextArgs[1], 0, 0);
+    _drawTextArgs[0].restore();
+  }
   
   /**
    * Randomly adds new crunchies 
