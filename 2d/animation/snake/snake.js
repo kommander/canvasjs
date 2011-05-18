@@ -322,19 +322,20 @@ var SnakeGame = function(canvas, tileSize) {
         _snake.move(3);
         break;
       // SPACE
-      case 32:
-        _restart();
-        break;
       // ESC
       case 27:
-        _restart();
+      case 32:
+        if(!_running && !_paused)
+          _restart();
         break;
       // P
       case 80:
-        if(_paused)
-          _this.resume();
-        else
-          _this.pause();
+        if(_running){
+          if(_paused)
+            _this.resume();
+          else
+            _this.pause();
+        }
         break;
     }
     evt.stopPropagation();
