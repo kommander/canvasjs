@@ -4,6 +4,7 @@
 var SnakeGame = function(canvas, tileSize) {
   
   var _loop = new Loop(canvas),
+  _running = false,
   _points = 0,
   _paused = false,
   _this = this,
@@ -141,6 +142,22 @@ var SnakeGame = function(canvas, tileSize) {
       );
     }
     
+    //Pause Message
+    if(!_running){
+      _drawText(
+        context,
+        'PRESS SPACE\nTO START A NEW GAME',
+        context.canvas.width / 2,
+        context.canvas.width / 2,
+        '800 20px Comic Sans, Tahoma',
+        '#1B7FF2',
+        'center',
+        1,
+        'rgba(255, 255, 255, 0.8)',
+        5
+      );
+    }
+    
     //Draw flash messages
     for(var i = 0; i < _flashMessages.length; i++){
       _drawText(
@@ -192,6 +209,7 @@ var SnakeGame = function(canvas, tileSize) {
     _flashMessage('CRASH!', '#FF4400');
     clearInterval(_crunchyInterval);
     _snake.paused = true;
+    _running = false;
   };
   
   /**
@@ -229,6 +247,15 @@ var SnakeGame = function(canvas, tileSize) {
    * Starts the game
    */
   this.start = function(){
+    _snake.paused = true;
+    _loop.start();
+  };
+  
+  /**
+   * Restart the game
+   */
+  var _restart = function(){
+    _running = true;
     _points = 0;
     _snake.reset(100, 200, 100, 2, 10, 75);
     _snake.paused = false;
@@ -237,7 +264,6 @@ var SnakeGame = function(canvas, tileSize) {
       _loop.remove(_onlineCrunchies[i]);
     _onlineCrunchies = [];
     _crunchyInterval = setInterval(_crunchy, 3000);
-    _loop.start();
   };
   
   /**
@@ -297,12 +323,11 @@ var SnakeGame = function(canvas, tileSize) {
         break;
       // SPACE
       case 32:
-
+        _restart();
         break;
       // ESC
       case 27:
-        _this.stop();
-        _this.start();
+        _restart();
         break;
       // P
       case 80:
