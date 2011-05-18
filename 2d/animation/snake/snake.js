@@ -17,8 +17,9 @@ var SnakeGame = function(canvas, tileSize) {
       this.paused = false;
       this.visible = true;
       
-      var _size = 16,
-      _blur = 10;
+      var _size = 12,
+      _blur = 10,
+      _wobbleSwitch = true;
       
       this.points = function(snake){
         return Math.round(snake.speed() * 0.3);
@@ -30,9 +31,16 @@ var SnakeGame = function(canvas, tileSize) {
       };
       
       this.animate = function(tickTimeDiff){
-        if(_size > 8){
-          _size -= 0.2;
+        if(_wobbleSwitch){
+          _size -= 0.1;
           _blur -= 0.1;
+          if(_size <= 8)
+            _wobbleSwitch = false;
+        } else {
+          _size += 0.1;
+          _blur += 0.1;
+          if(_size >= 10)
+            _wobbleSwitch = true;
         }
       };
       
