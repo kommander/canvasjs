@@ -11,6 +11,7 @@ function Loop(canvas)
   _context = _canvas.getContext('2d'),
   _running = false,
   _ticking = false,
+  _k,
   
   _tickTime = Date.now(),
   _lastTickTime = Date.now(),
@@ -112,12 +113,12 @@ function Loop(canvas)
     
     _context.clearRect(0, 0, _canvas.width, _canvas.height);
           
-    for(var k = 0; k < _objects.length; k++)
+    for(var _k = 0; _k < _objects.length; _k++)
     {
-      if(_objects[k].visible){
-        if(!_objects[k].paused)
-          _objects[k].animate.call(_objects[k], _tickTimeDiff);
-        _objects[k].draw.call(_objects[k], _context);
+      if(_objects[_k].visible){
+        if(!_objects[_k].paused)
+          _objects[_k].animate.call(_objects[_k], _tickTimeDiff);
+        _objects[_k].draw.call(_objects[_k], _context);
       }
     }
     
