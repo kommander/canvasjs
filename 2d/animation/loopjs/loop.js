@@ -5,30 +5,24 @@
  * Url: sebastian.formzoo.com
  * License: MIT
  */
-function Loop(canvas)
+function Loop(canvas, frameRate)
 {
   var _canvas = canvas,
   _context = _canvas.getContext('2d'),
-  _running = false,
   _ticking = false,
   _k,
   
-  _tickTime = Date.now(),
-  _lastTickTime = Date.now(),
+  _lastTickTime = 0,
   _tickTimeDiff = 0,
-  _tickDuration = 0,
   _tickTimeout = 0x0,
   
   _startTime = 0,
-  _statusTime = _lastTickTime,
-  _frameRate = 30,
-  _frameRateTick = 1000 / _frameRate,
+  _frameRate = frameRate,
+  _frameRateTick = 1000 / frameRate,
   
   //Stats
-  _droppedFrames = 0,
-  _frameCounter = 0,
   _fps = 0,
-  _infoFont = '800 12px Helvetica, Arial, sans-serif';
+  _infoFont = '800 10px Helvetica, Arial, sans-serif';
   _switchObject = {
     showInfo: function(){}
   }
@@ -103,13 +97,8 @@ function Loop(canvas)
    * The main loop, here the objects are rendered if visible
    */
   var _tick = function(){
-    if(!_running)
-      return;
-    
     _ticking = true;
-    _tickTime = Date.now();
-    _tickTimeDiff = _tickTime - _lastTickTime;
-    _lastTickTime = _tickTime;
+    _tickTimeDiff = -_lastTickTime + (_lastTickTime = Date.now());
     
     _context.clearRect(0, 0, _canvas.width, _canvas.height);
           
@@ -122,34 +111,23 @@ function Loop(canvas)
       }
     }
     
-    if(_tickTime - _statusTime >= 1000){
-      _fps = Math.round(_frameCounter / (_tickTime - _statusTime) * 1000);
-      _frameCounter = 0;
-      _statusTime = _tickTime;
-    }
-      
+    _fps = Math.round(1000 / _tickTimeDiff);
     _switchObject.showInfo.call(this);
-    
-    _frameCounter++;
     
     _ticking = false;
     
     while(_removeObjects.length > 0){
       _remove(_removeObjects.shift());
     }
-    
-    _tickDuration = (Date.now() - _tickTime);
-    _tickTimeout = setTimeout(_tick, _frameRateTick - _tickDuration);
   };
   
   /**
    * start the loop
    */ 
   this.start = function() {
-    _startTime = Date.now();
-    _frameCounter = 0;
-    _running = true;
-    _tickTimeout = setTimeout(_tick, 1);
+    _startTime = _lastTickTime = Date.now();
+    clearInterval(_tickTimeout);
+    _tickTimeout = setInterval(_tick, _frameRateTick);
     return this;
   };
   
@@ -157,8 +135,7 @@ function Loop(canvas)
    * stop the loop
    */
   this.stop = function() {
-    clearTimeout(_tickTimeout);
-    _running = false;
+    clearInterval(_tickTimeout);
     return this;
   };
   
@@ -168,10 +145,7 @@ function Loop(canvas)
   this.frameRate = function(fps) {
     _frameRate = fps;
     _frameRateTick = 1000 / _frameRate;
-    if(_running){
-      this.stop();
-      this.start();
-    }
+    this.start();
     return this;
   };
   
@@ -196,12 +170,7 @@ function Loop(canvas)
     _context.save();
     _context.font = _infoFont;
     _context.fillStyle = '#009999';
-    var runtime = Date.now() - _startTime;
-    var infoString = _objects.length + ' Objects ';
-    infoString += Math.floor(runtime / 60000) + 'min. ' + Math.floor(runtime % 60000 / 1000) + ' sec. ';
-    infoString += _fps + ' FPS';
-    var metrics = _context.measureText(infoString);
-    _context.fillText(infoString, _canvas.width - metrics.width - 5, 10);
+    _context.fillText(_objects.length + ' Objects ' + _fps + ' FPS', 5, 10);
     _context.restore();
   }; 
 }
