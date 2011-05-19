@@ -9,37 +9,28 @@
 <canvas id="testCanvas" width="1024" height="768" />
 <script type="text/javascript">
 var canvas = document.getElementById('testCanvas');
-var context = canvas.getContext('2d');
 
 var img = new Image();
 img.src = 'img/tile01.png';
 
 img.onload = function(){
-  var loop = new Loop(canvas);
-  loop.frameRate(200);
+  var loop = new Loop(canvas.getContext('2d'), 200);
   for(var i = 0; i < 1000; i++)
   {
     var im = new image();
-    loop.add(im);
+    loop.push(im);
   }
-  loop.showInfo(true);
-  loop.start();
+  loop.showInfo(true).start();
 }
 
 function image()
 {
   var _x, _y;
   
-  this.visible = true;
-  this.paused = false;
-  
-  this.animate = function(){
+  this.tick = function(context)
+  {
     _x = randRange(0, 992);
     _y = randRange(0, 734);
-  };
-  
-  this.draw = function(context)
-  {
     context.drawImage(img, _x, _y);
   };
 }

@@ -16,10 +16,7 @@ var lastPoint = {x: 0, y: 0 };
 var mouseDown = false;
 
 var background = {
-  visible: true,
-  paused: false,
-  animate: function(){},
-  draw: function(context)
+  tick: function(context)
   {
     context.fillStyle = '#666666';
     context.fillRect(0, 0, canvas.width, canvas.height);
@@ -35,12 +32,8 @@ function Bezier(){
   this.a1y = 0;
   this.a2x = 0;
   this.a2y = 0;
-  this.visible = true;
-  this.paused = false
   
-  this.animate = function(){};
-  
-  this.draw = function(context)
+  this.tick  = function(context)
   {
     context.beginPath();
     context.strokeStyle = '#00ffff';
@@ -84,7 +77,7 @@ canvas.onmouseup = function(e)
   newBezier.a1y = currentBezier.a1y;
   newBezier.a2x = currentBezier.a2x;
   newBezier.a2y = currentBezier.a2y;
-  loop.add(newBezier);
+  loop.push(newBezier);
   loop.stop();
 }
 
@@ -112,12 +105,11 @@ canvas.onmousemove = function(e){
   }
 }
 
-var loop = new Loop(canvas);
-loop.frameRate(200);
-loop.showInfo(true);
-loop.add(background);
-loop.add(currentBezier);
-loop.start();
+var loop = new Loop(canvas.getContext('2d'), 200)
+  .showInfo(true)
+  .push(background)
+  .push(currentBezier)
+  .start();
 
 </script>
 </body>
