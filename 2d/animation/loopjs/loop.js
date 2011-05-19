@@ -3,15 +3,12 @@
  * A simple animation loop for HTML5 canvas
  * Author: Sebastian Herrlinger <sebastian@formzoo.com>
  * Url: sebastian.formzoo.com
- * TODO: Take context in constructor, not canvas and clear with _context.canvas.width to allow for other contexts
  * TODO: implement timed property animation
- * TODO: reduce objects to only need a public tick function which gets the context and the tickTimeDiff
  * License: MIT
  */
-function Loop(canvas, frameRate)
+function Loop(context, frameRate)
 {
-  var _canvas = canvas,
-  _context = _canvas.getContext('2d'),
+  var _context = context,
   _ticking = false,
   _k,
   
@@ -27,7 +24,7 @@ function Loop(canvas, frameRate)
   _fps = 0,
   
   _clearContext = function(context){
-    _context.clearRect(0, 0, _canvas.width, _canvas.height);
+    _context.clearRect(0, 0, _context.canvas.width, _context.canvas.height);
   },
   _switchObject = {
     showInfo: function(){},
@@ -64,9 +61,18 @@ function Loop(canvas, frameRate)
    * which will be provided with the 2D context,
    * otherwise it won't be added.
    */
-  this.add = function(object){
+  this.push = function(object){
     if(_validateObject(object))
       _objects.push(object);
+    return this;
+  };
+  
+  /**
+   * Add an Object to the _front_
+   */
+  this.shift = function(object){
+    if(_validateObject(object))
+      _objects.shift(object);
     return this;
   };
   
