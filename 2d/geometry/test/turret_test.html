@@ -21,9 +21,6 @@ var turret = new (function(x, y){
   _moveDistance = 0,
   _speed = 50;
   
-  this.visible = true;
-  this.paused = false;
-  
   this.pointTo = function(x, y){
     _cannon.angleTo({ x: x, y: y});
   };
@@ -33,7 +30,7 @@ var turret = new (function(x, y){
     _target.y = y;
   };
   
-  this.animate = function(tickTimeDiff){
+  this.tick = function(context, tickTimeDiff){
     _pos.angleTo(_target);
     _moveDistance = tickTimeDiff / 1000 * _speed;
     if(_pos.distance(_target) > _moveDistance){
@@ -42,9 +39,7 @@ var turret = new (function(x, y){
       _pos.x = _target.x;
       _pos.y = _target.y;
     }
-  };
-  
-  this.draw = function(context){
+    
     _cannon.x = _pos.x;
     _cannon.y = _pos.y;
     _cannonEnd = _cannon.copy();
@@ -66,7 +61,7 @@ var turret = new (function(x, y){
   
 })(200, 200);
 
-var loop = new Loop(canvas).frameRate(60).showInfo(true).add(turret).start();
+var loop = new Loop(canvas.getContext('2d'), 60).showInfo(true).push(turret).start();
 
 canvas.addEventListener('click', function(e){
   turret.moveTo(e.clientX - e.target.offsetLeft, e.clientY - e.target.offsetTop);
