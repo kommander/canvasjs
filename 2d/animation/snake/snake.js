@@ -3,11 +3,12 @@
  */
 var SnakeGame = function(canvas, tileSize) {
   
-  var _loop = new Loop(canvas),
+  var _loop = new Loop(canvas.getContext('2d')),
   _running = false,
   _points = 0,
   _paused = false,
   _this = this,
+  _showInfo = false,
   //The crunchies that can be eaten by the snake, extendable
   _crunchies = [
     function(x, y){
@@ -225,11 +226,10 @@ var SnakeGame = function(canvas, tileSize) {
   
   //Add the game itself to the loop for game logic ticks
   _loop
-    .add(_background)
-    .add(_snake)
-    .add(this)
-    .frameRate(60)
-    .showInfo(true);
+    .push(_background)
+    .push(_snake)
+    .push(this)
+    .frameRate(60);
   
   /**
    * Starts the game
@@ -285,6 +285,11 @@ var SnakeGame = function(canvas, tileSize) {
    */   
   var _keyHandler = function(evt) {
     switch(evt.keyCode) {
+      // I
+      case 73:
+        _showInfo = !_showInfo;
+        _loop.showInfo(_showInfo);
+        break;
       // L
       case 76:
         _snake.dashed(!_snake.dashed());
@@ -310,8 +315,6 @@ var SnakeGame = function(canvas, tileSize) {
         _snake.move(3);
         break;
       // SPACE
-      // ESC
-      case 27:
       case 32:
         if(!_running && !_paused)
           _restart();
