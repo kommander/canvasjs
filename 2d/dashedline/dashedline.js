@@ -218,7 +218,7 @@ CanvasRenderingContext2D.prototype.dashedArc = function(x, y, radius, startAngle
           if (i % 2 == 0)
           {
             this.superBeginPath();
-            this.superArc(x, y, radius, currentAngle, currentAngle + angleStep);
+            this.superArc(x, y, radius, currentAngle, currentAngle + angleStep, false);
             this.superStroke();
           } 
           currentAngle += angleStep;
@@ -238,7 +238,7 @@ CanvasRenderingContext2D.prototype.dashedArc = function(x, y, radius, startAngle
     if (this.lengthStartIndex % 2 == 0)
     {
       this.superBeginPath();
-      this.superArc(x, y, radius, currentAngle, endAngle);
+      this.superArc(x, y, radius, currentAngle, endAngle, false);
       this.superStroke();
     }
     this.remainingDist = this.dashPattern[this.lengthStartIndex] - this.remainingDist;
@@ -322,7 +322,7 @@ CanvasRenderingContext2D.prototype.fill = function()
           this.superMoveTo(this.subPaths[sk][k][1], this.subPaths[sk][k][2]);
           break;
         case 'a':
-          this.superArc(this.subPaths[sk][k][1], this.subPaths[sk][k][2], this.subPaths[sk][k][3], this.subPaths[sk][k][4], this.subPaths[sk][k][5]);
+          this.superArc(this.subPaths[sk][k][1], this.subPaths[sk][k][2], this.subPaths[sk][k][3], this.subPaths[sk][k][4], this.subPaths[sk][k][5], false);
           break;
       }
     }
@@ -398,7 +398,7 @@ CanvasRenderingContext2D.prototype.stroke = function()
             this.superMoveTo(this.subPaths[sk][k][1], this.subPaths[sk][k][2]);
             break;
           case 'a':
-            this.superArc(this.subPaths[sk][k][1], this.subPaths[sk][k][2], this.subPaths[sk][k][3], this.subPaths[sk][k][4], this.subPaths[sk][k][5]);
+            this.superArc(this.subPaths[sk][k][1], this.subPaths[sk][k][2], this.subPaths[sk][k][3], this.subPaths[sk][k][4], this.subPaths[sk][k][5], false);
             break;
           case 'b':
             this.superBezierCurveTo(
