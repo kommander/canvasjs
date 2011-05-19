@@ -282,57 +282,39 @@ var SnakeGame = function(canvas, tileSize) {
   
   /**
    * Key control input handling
-   */   
-  var _keyHandler = function(evt) {
-    switch(evt.keyCode) {
-      // I
-      case 73:
-        _showInfo = !_showInfo;
-        _loop.showInfo(_showInfo);
-        break;
-      // L
-      case 76:
-        _snake.dashed(!_snake.dashed());
-        break;
-      // A, left
-      case 37:
-      case 65:
-        _snake.move(2);
-        break;
-      // w, up
-      case 38:
-      case 87:
-        _snake.move(0);
-        break;
-      // S, down
-      case 40:
-      case 83:
-        _snake.move(1);
-        break;
-      // D, right
-      case 39:
-      case 68:
-        _snake.move(3);
-        break;
-      // SPACE
-      case 32:
-        if(!_running && !_paused)
-          _restart();
-        break;
-      // P
-      case 80:
-        if(_running){
-          if(_paused)
-            _this.resume();
-          else
-            _this.pause();
-        }
-        break;
+   */
+  Input.bind(['i'], function(){
+    _showInfo = !_showInfo;
+    _loop.showInfo(_showInfo);
+  })
+  .bind(['l'], function(){
+    _snake.dashed(!_snake.dashed());
+  })
+  .bind(['a', 'left'], function(){
+    _snake.move(2);
+  })
+  .bind(['w', 'up'], function(){
+    _snake.move(0);
+  })
+  .bind(['s', 'down'], function(){
+    _snake.move(1);
+  })
+  .bind(['d', 'right'], function(){
+    _snake.move(3);
+  })
+  .bind(['space'], function(){
+    if(!_running && !_paused)
+      _restart();
+  })
+  .bind(['p'], function(){
+    if(_running){
+      if(_paused)
+        _this.resume();
+      else
+        _this.pause();
     }
-    evt.stopPropagation();
-    evt.preventDefault();
-  };
-  
+  });
+
   /**
    * Get a random number between a min and a max number
    */
@@ -340,10 +322,6 @@ var SnakeGame = function(canvas, tileSize) {
   {
     return (Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum);
   }
-    
-  //Keylistener
-  window.addEventListener('keydown', _keyHandler, false);
-  
 };
 
 /**
