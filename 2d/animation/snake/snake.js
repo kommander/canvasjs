@@ -15,9 +15,6 @@ var SnakeGame = function(canvas, tileSize) {
       this.y = y;
       this.name = 'Kommander Crunch!';
       
-      this.paused = false;
-      this.visible = true;
-      
       var _size = 12,
       _blur = 10,
       _wobbleSwitch = true;
@@ -31,7 +28,8 @@ var SnakeGame = function(canvas, tileSize) {
         snake.speed(snake.speed() + 1);
       };
       
-      this.animate = function(tickTimeDiff){
+      this.tick = function(context, tickTimeDiff){
+        //animate
         if(_wobbleSwitch){
           _size -= 0.1;
           _blur -= 0.1;
@@ -43,9 +41,8 @@ var SnakeGame = function(canvas, tileSize) {
           if(_size >= 10)
             _wobbleSwitch = true;
         }
-      };
-      
-      this.draw = function(context){
+        
+        //Draw
         context.save();
         context.beginPath();
         context.fillStyle = '#1B7FF2';
@@ -81,8 +78,9 @@ var SnakeGame = function(canvas, tileSize) {
   
   /**
    * Checks for canvas boundaries, crunchy hits and flash messages
+   * Draws the points
    */
-  this.animate = function(tickTimeDiff){
+  this.tick = function(context, tickTimeDiff){
     if(!_snake.paused){
       if(_snake.pos().x < 0 || _snake.pos().x > canvas.width || _snake.pos().y < 0 || _snake.pos().y > canvas.height)
         _snakeCollided();
@@ -100,19 +98,6 @@ var SnakeGame = function(canvas, tileSize) {
       }
     };
     
-    //Animate flash messages
-    for(var i = 0; i < _flashMessages.length; i++){
-      _flashMessages[i].time += tickTimeDiff;
-      if(_flashMessages[i].time >= _flashMessageTime){
-        _flashMessages.splice(i, 1);
-      }
-    }
-  };
-  
-  /**
-   * Draws the points
-   */
-  this.draw = function(context){
     _drawText(
       context,
       'Points: ' + _points,
@@ -160,6 +145,11 @@ var SnakeGame = function(canvas, tileSize) {
     
     //Draw flash messages
     for(var i = 0; i < _flashMessages.length; i++){
+      _flashMessages[i].time += tickTimeDiff;
+      if(_flashMessages[i].time >= _flashMessageTime){
+        _flashMessages.splice(i, 1);
+        continue;
+      }
       _drawText(
         context,
         _flashMessages[i].msg,
@@ -225,10 +215,7 @@ var SnakeGame = function(canvas, tileSize) {
     var _data = context.getImageData(0, 0, context.canvas.width, context.canvas.height);
     context.restore();
     
-    this.visible = true;
-    this.paused = false;
-    this.animate = function(){};
-    this.draw = function(context){
+    this.tick = function(context){
       context.putImageData(_data, 0, 0);
     };
   })(canvas.getContext('2d'));
@@ -237,7 +224,8 @@ var SnakeGame = function(canvas, tileSize) {
   var _snake = new Snake(100, 200, 100, 2, 10, 75, _snakeCollided);
   
   //Add the game itself to the loop for game logic ticks
-  _loop.add(_background)
+  _loop
+    .add(_background)
     .add(_snake)
     .add(this)
     .frameRate(60)
@@ -339,7 +327,7 @@ var SnakeGame = function(canvas, tileSize) {
         break;
     }
     evt.stopPropagation();
-    evt.stopImmediatePropagation();
+    evt.preventDefault();
   };
   
   /**
@@ -425,40 +413,7 @@ var Snake = function(x, y, length, direction, thickness, speed, collisionCallbac
     return _nodes[0];
   };
   
-  //Loop object attributes
-  this.visible = true;
   this.paused = false;
-  
-  /**
-   * Moves the snake forward and checks for collisions
-   */
-  this.animate = function(tickTimeDiff){
-    _movedDistance = tickTimeDiff / 1000 * _speed; 
-    switch(_currentDirection){
-      //top
-      case 0:
-        _nodes[0].y -= _movedDistance;
-        break;
-      //bottom
-      case 1:
-        _nodes[0].y += _movedDistance;
-        break;
-      //left
-      case 2:
-        _nodes[0].x -= _movedDistance;
-        break;
-      //right
-      case 3:
-        _nodes[0].x += _movedDistance;
-        break;
-    }
-    //Collide
-    for(var i = 2; i < _nodes.length; i++){
-      if(i + 1 < _nodes.length){
-        _checkCollision.call(this, _nodes[0], _nodes[i], _nodes[i + 1]);
-      }
-    }
-  };
   
   /**
    * Checks if n0 collides with the line between n1 and n2
@@ -502,7 +457,30 @@ var Snake = function(x, y, length, direction, thickness, speed, collisionCallbac
     _collisionCallback();
   };
   
-  this.draw = function(context) {
+  this.tick = function(context, tickTimeDiff) {
+    if(!this.paused){
+      _movedDistance = tickTimeDiff / 1000 * _speed; 
+      switch(_currentDirection){
+        //top
+        case 0:
+          _nodes[0].y -= _movedDistance;
+          break;
+        //bottom
+        case 1:
+          _nodes[0].y += _movedDistance;
+          break;
+        //left
+        case 2:
+          _nodes[0].x -= _movedDistance;
+          break;
+        //right
+        case 3:
+          _nodes[0].x += _movedDistance;
+          break;
+      }
+      
+    }
+    
     _rest = _length;
     _nodeIndex = 0;
     
@@ -519,6 +497,12 @@ var Snake = function(x, y, length, direction, thickness, speed, collisionCallbac
     while(_nodeIndex < _nodes.length - 1){
       _nodeIndex++;
       _drawn = (_nodes[_nodeIndex].y - _nodes[_nodeIndex - 1].y) + (_nodes[_nodeIndex].x - _nodes[_nodeIndex - 1].x);
+      
+      //Collide
+      if(_nodeIndex + 1 < _nodes.length){
+        _checkCollision.call(this, _nodes[0], _nodes[_nodeIndex], _nodes[_nodeIndex + 1]);
+      }
+      
       if(_rest - Math.abs(_drawn) > 0){
         context.lineTo(_nodes[_nodeIndex].x, _nodes[_nodeIndex].y);
         _rest -= Math.abs(_drawn);

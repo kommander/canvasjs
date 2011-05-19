@@ -25,20 +25,33 @@ function Loop(canvas, frameRate)
   
   //Stats
   _fps = 0,
-  _infoFont = '800 10px Helvetica, Arial, sans-serif';
+  
+  _clearContext = function(context){
+    _context.clearRect(0, 0, _canvas.width, _canvas.height);
+  },
   _switchObject = {
-    showInfo: function(){}
-  }
+    showInfo: function(){},
+    tickStart: _clearContext
+  },
   
   //The objects to render
   _objects = [],
   _removeObjects = [];
   
-  this.showInfo = function(show){
-    if(show)
-      _switchObject.showInfo = _drawInfo;
-    else
-      _switchObject.showInfo = function(){};
+  /**
+   * Sets if the frame info is rendered each tick
+   */
+  this.showInfo = function(show, draw){
+    _switchObject.showInfo = (show) ? _drawInfo : (typeof(draw) == 'function') ? draw : function(){};
+    return this;
+  };
+  
+  /**
+   * Sets what happens when we enter a tick
+   * By default the loop clears the canvas context
+   */
+  this.tickStart = function(clear, what){
+    _switchObject.showInfo = (clear) ? _clearContext : (typeof(what) == 'function') ? what : function(){};
     return this;
   };
   
@@ -99,19 +112,14 @@ function Loop(canvas, frameRate)
   /**
    * The main loop, here the objects are rendered if visible
    */
-  var _tick = function(){
+  var _tick = function() {
     _ticking = true;
     _tickTimeDiff = -_lastTickTime + (_lastTickTime = Date.now());
     
-    _context.clearRect(0, 0, _canvas.width, _canvas.height);
-          
-    for(var _k = 0; _k < _objects.length; _k++)
-    {
-      if(_objects[_k].visible){
-        if(!_objects[_k].paused)
-          _objects[_k].animate.call(_objects[_k], _tickTimeDiff);
-        _objects[_k].draw.call(_objects[_k], _context);
-      }
+    _switchObject.tickStart(_context, _tickTimeDiff);
+    
+    for(var _k = 0; _k < _objects.length; _k++) {
+      _objects[_k].tick.call(_objects[_k], _context, _tickTimeDiff);
     }
     
     _fps = Math.round(1000 / _tickTimeDiff);
@@ -119,7 +127,7 @@ function Loop(canvas, frameRate)
     
     _ticking = false;
     
-    while(_removeObjects.length > 0){
+    while(_removeObjects.length > 0) {
       _remove(_removeObjects.shift());
     }
   };
@@ -159,11 +167,12 @@ function Loop(canvas, frameRate)
     return _fps;
   };
   
+  /**
+   * Checks if the object we want to add has a tick method we can call in the loop
+   */
   var _validateObject = function(object) {
-    if(object.draw && object.animate && object.visible != undefined && object.paused != undefined)
-      return true;
-    else
-      throw new Error('Objects must have the public methods draw & animate and the public attributes visible and paused.');
+    if(typeof(object.tick) == 'function'){ return true; }
+    else { throw new Error('Objects must provide the public method tick.'); }
   };
   
   /**
@@ -171,7 +180,7 @@ function Loop(canvas, frameRate)
    */
   var _drawInfo = function() {
     _context.save();
-    _context.font = _infoFont;
+    _context.font = '800 10px Helvetica, Arial, sans-serif';
     _context.fillStyle = '#009999';
     _context.fillText(_objects.length + ' Objects ' + _fps + ' FPS', 5, 10);
     _context.restore();
