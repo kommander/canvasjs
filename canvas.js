@@ -2,8 +2,14 @@
  * canvas.js
  * Basic functionality, reused by other components
  *
+ * Author: Sebastian Herrlinger <sebastian@formzoo.com>
+ * Url: sebastian.formzoo.com
+ * License: MIT
+ *
  * TODO: add namespaces
  * TODO: makefile with "make release"
+ *
+ * Copyright 2011 Sebastian Herrlinger
  */
 
 /**

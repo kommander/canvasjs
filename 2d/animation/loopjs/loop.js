@@ -3,8 +3,11 @@
  * A simple animation loop for HTML5 canvas
  * Author: Sebastian Herrlinger <sebastian@formzoo.com>
  * Url: sebastian.formzoo.com
- * TODO: implement timed property animation
  * License: MIT
+ *
+ * TODO: implement timed property animation
+ *
+ * Copyright 2011 Sebastian Herrlinger
  */
 function Loop(context, frameRate)
 {

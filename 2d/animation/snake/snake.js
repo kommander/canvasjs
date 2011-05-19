@@ -1,5 +1,6 @@
 /**
  * The Game
+ * Copyright 2011 Sebastian Herrlinger
  */
 var SnakeGame = function(canvas, tileSize) {
   

@@ -6,6 +6,8 @@
  * License: MIT
  *
  * TODO: Add mouse handling and give callback event + mouseDelta
+ *
+ * Copyright 2011 Sebastian Herrlinger
  */
 
 var Input = new (function(){

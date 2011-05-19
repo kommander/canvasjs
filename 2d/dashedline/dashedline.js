@@ -8,6 +8,8 @@
  * 
  * author Sebastian Herrlinger <sebastian@formzoo.com>
  * url sebastian.formzoo.com
+ *
+ * Copyright 2011 Sebastian Herrlinger
  */
 CanvasRenderingContext2D.prototype.superBeginPath = CanvasRenderingContext2D.prototype.beginPath;
 CanvasRenderingContext2D.prototype.beginPath = function()
