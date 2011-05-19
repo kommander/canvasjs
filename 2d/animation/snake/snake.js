@@ -290,18 +290,10 @@ var SnakeGame = function(canvas, tileSize) {
   .bind(['l'], function(){
     _snake.dashed(!_snake.dashed());
   })
-  .bind(['a', 'left'], function(){
-    _snake.move(2);
-  })
-  .bind(['w', 'up'], function(){
-    _snake.move(0);
-  })
-  .bind(['s', 'down'], function(){
-    _snake.move(1);
-  })
-  .bind(['d', 'right'], function(){
-    _snake.move(3);
-  })
+  .bind(['a', 'left'], _snake.move.bind(_snake, 2))
+  .bind(['w', 'up'], _snake.move.bind(_snake, 0))
+  .bind(['s', 'down'], _snake.move.bind(_snake, 1))
+  .bind(['d', 'right'], _snake.move.bind(_snake, 3))
   .bind(['space'], function(){
     if(!_running && !_paused)
       _restart();
