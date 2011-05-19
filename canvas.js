@@ -1,6 +1,9 @@
 /**
  * canvas.js
  * Basic functionality, reused by other components
+ *
+ * TODO: add namespaces
+ * TODO: makefile with "make release"
  */
 
 /**

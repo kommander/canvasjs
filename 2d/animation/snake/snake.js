@@ -283,22 +283,22 @@ var SnakeGame = function(canvas, tileSize) {
   /**
    * Key control input handling
    */
-  Input.bind(['i'], function(){
+  Input.bind(['i'], 'info', function(){
     _showInfo = !_showInfo;
     _loop.showInfo(_showInfo);
   })
-  .bind(['l'], function(){
+  .bind(['l'], 'linestyle', function(){
     _snake.dashed(!_snake.dashed());
   })
-  .bind(['a', 'left'], _snake.move.bind(_snake, 2))
-  .bind(['w', 'up'], _snake.move.bind(_snake, 0))
-  .bind(['s', 'down'], _snake.move.bind(_snake, 1))
-  .bind(['d', 'right'], _snake.move.bind(_snake, 3))
-  .bind(['space'], function(){
+  .bind(['a', 'left'], 'left', _snake.move.bind(_snake, 2))
+  .bind(['w', 'up'], 'up', _snake.move.bind(_snake, 0))
+  .bind(['s', 'down'], 'down', _snake.move.bind(_snake, 1))
+  .bind(['d', 'right'], 'right', _snake.move.bind(_snake, 3))
+  .bind(['space'], 'start', function(){
     if(!_running && !_paused)
       _restart();
   })
-  .bind(['p'], function(){
+  .bind(['p'], 'pause', function(){
     if(_running){
       if(_paused)
         _this.resume();
@@ -306,7 +306,7 @@ var SnakeGame = function(canvas, tileSize) {
         _this.pause();
     }
   });
-
+  
   /**
    * Get a random number between a min and a max number
    */
