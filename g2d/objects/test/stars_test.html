@@ -35,7 +35,7 @@
   <input id="lineScaleMinus" type="button" value=" - " />
   <input id="lineScalePlus" type="button" value=" + " />
   <br/>
-  Color: <input id="color" type="text" value="#eee" size="5" /><input id="applyColor" type="button" value="apply" />
+  Color(s): <input id="color" type="text" value="#eee" size="10" /><input id="applyColor" type="button" value="apply" /> (Comma separated)
 </div>
 
 <script type="text/javascript">
@@ -72,11 +72,11 @@ click('starsMinus', function(){
 });
 
 click('applyMin', function(){
-  stars.starSize(document.getElementById('minimum').value);
+  stars.starSize($('minimum').value);
 });
 
 click('applyMax', function(){
-  stars.starSize(null, document.getElementById('maximum').value);
+  stars.starSize(null, $('maximum').value);
 });
 
 click('linesOnOff', function(){
@@ -90,12 +90,11 @@ click('lineScalePlus', function(){
 });
 
 click('lineScaleMinus', function(){
-  stars.lineScale -= 0.01;
   $('lineScale').innerHTML = String(stars.lineScale + 0.001).substr(0, (stars.lineScale > 0) ? 4 : 5);
 });
 
 click('applyColor', function(){
-  stars.color = document.getElementById('color').value;
+  stars.color(($('color').value.match(/,/)) ? $('color').value.split(',') : $('color').value);
 });
 
 var loop = new kk.Loop(canvas.getContext('2d'), 200)

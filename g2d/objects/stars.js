@@ -10,6 +10,7 @@ kk.g2d.obj.Stars = function(width, height, maxStars, speed, color, min, max, tim
   _timeSecond = 0,
   _starSize = [],
   _lineLength = 0,
+  _color = color || '#eee',
   
   /**
    * Generates the star objects depending on the settings,
@@ -20,11 +21,11 @@ kk.g2d.obj.Stars = function(width, height, maxStars, speed, color, min, max, tim
     //generate stars
     for(var i = (from || 0); i < _maxStars; i++){
       var size = kk.rand(_starSize[0], _starSize[1]);
-      var length = (this.useLines) ? this.lineScale * this.speed * size: size;
-      _stars[i]= {
+      _stars[i] = {
+        color: (_color.constructor == Array) ? _color[kk.rand(0, _color.length)] : _color,
         size: size,
         x: kk.rand(0, this.width),
-        y: kk.rand(-length, this.height + 1000),
+        y: kk.rand(-((this.useLines) ? this.lineScale * this.speed * size: size), this.height + 1000),
         timeout: (size < 0) ? kk.rand(0, this.timeout) : 0
       };
     }
@@ -36,6 +37,21 @@ kk.g2d.obj.Stars = function(width, height, maxStars, speed, color, min, max, tim
   //Width and height of the starfield
   this.width = width || 500;
   this.height = height || 1000;
+  
+  //If lines are used, the line length is determined by the speed and the star size,
+  //multiplied by the lineScale
+  this.useLines = useLines || false;
+  this.lineScale = lineScale || 0.1;
+  
+  //How fast are the stars moving in pixel per second
+  //The stars own speed is the general speed times their size
+  this.speed = speed || 10;
+  this.color = function(color){
+    _color = color;
+    for(var i = 0; i < _maxStars; i++){
+      _stars[i].color = (_color.constructor == Array) ? _color[kk.rand(0, _color.length)] : _color;
+    }
+  };
   
   /**
    * Set the minimum and maximum size of the stars,
@@ -69,25 +85,14 @@ kk.g2d.obj.Stars = function(width, height, maxStars, speed, color, min, max, tim
     return _maxStars;
   };
   
-  
-  //If lines are used, the line length is determined by the speed and the star size,
-  //multiplied by the lineScale
-  this.useLines = useLines || false;
-  this.lineScale = lineScale || 0.1;
-  
-  //How fast are the stars moving in pixel per second
-  //The stars own speed is the general speed times their size
-  this.speed = speed || 10;
-  this.color = color || '#eee';
-  
   /**
    * Render the stars
    */
   this.tick = function(context, timeDiff){
     _timeSecond = timeDiff * 0.001;
-    context.fillStyle = this.color;
-    context.strokeStyle = this.color;
     for(var i = 0; i < _maxStars; i++){
+      context.fillStyle = _stars[i].color;
+      context.strokeStyle = _stars[i].color;
       _lineLength = (this.useLines) ? this.lineScale * this.speed * _stars[i].size: _stars[i].size;
       _stars[i].timeout -= timeDiff;
       if((this.speed > 0 && _stars[i].y > this.height + _lineLength)
