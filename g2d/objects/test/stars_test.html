@@ -90,6 +90,7 @@ click('lineScalePlus', function(){
 });
 
 click('lineScaleMinus', function(){
+  stars.lineScale -= 0.01;
   $('lineScale').innerHTML = String(stars.lineScale + 0.001).substr(0, (stars.lineScale > 0) ? 4 : 5);
 });
 
