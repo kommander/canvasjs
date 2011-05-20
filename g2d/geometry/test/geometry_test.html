@@ -1,6 +1,7 @@
 <html>
 <head>
   <title>Geometry Test</title>
+  <script type="text/javascript" src="../../../canvas.js"></script>
   <script type="text/javascript" src="../trig.js"></script>
   <script type="text/javascript" src="../vector2d.js"></script>
 </head>
@@ -9,8 +10,8 @@
 Distance: <span id="testDistance"></span><br/>
 AngleTo: <span id="testAngleTo"></span>
 <script type="text/javascript">
-var v1 = new Vector2D(10, 10, 0);
-var v2 = new Vector2D(50, 50, 0);
+var v1 = new kk.g2d.Vector2D(10, 10, 0);
+var v2 = new kk.g2d.Vector2D(50, 50, 0);
 if(v1.distance(v2) == 56.568542494923804)
   document.getElementById('testDistance').innerHTML = 'success!';
 else

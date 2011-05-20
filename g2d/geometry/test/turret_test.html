@@ -1,7 +1,8 @@
 <html>
 <head>
   <title>Geometry Turret Test</title>
-  <script type="text/javascript" src="../../animation/loopjs/loop.js"></script>
+  <script type="text/javascript" src="../../../canvas.js"></script>
+  <script type="text/javascript" src="../../../loop/loop.js"></script>
   <script type="text/javascript" src="../trig.js"></script>
   <script type="text/javascript" src="../vector2d.js"></script>
 </head>
@@ -14,9 +15,9 @@
 var canvas = document.getElementById('testCanvas');
 
 var turret = new (function(x, y){
-  var _pos = new Vector2D(x, y, 0),
-  _target = new Vector2D(x, y, 0)
-  _cannon = new Vector2D(x, y, 0),
+  var _pos = new kk.g2d.Vector2D(x, y, 0),
+  _target = new kk.g2d.Vector2D(x, y, 0)
+  _cannon = new kk.g2d.Vector2D(x, y, 0),
   _cannonEnd = null;
   _moveDistance = 0,
   _speed = 50;
@@ -61,7 +62,7 @@ var turret = new (function(x, y){
   
 })(200, 200);
 
-var loop = new Loop(canvas.getContext('2d'), 60).showInfo(true).push(turret).start();
+var loop = new kk.Loop(canvas.getContext('2d'), 60).showInfo(true).push(turret).start();
 
 canvas.addEventListener('click', function(e){
   turret.moveTo(e.clientX - e.target.offsetLeft, e.clientY - e.target.offsetTop);

@@ -1,6 +1,7 @@
 <html>
 <head>
   <title>Loop.js Image Animation Test</title>
+  <script type="text/javascript" src="../../canvas.js"></script>
   <script type="text/javascript" src="../loop.js"></script>
 </head>
 <body>
@@ -14,7 +15,7 @@ var img = new Image();
 img.src = 'img/tile01.png';
 
 img.onload = function(){
-  var loop = new Loop(canvas.getContext('2d'), 200);
+  var loop = new kk.Loop(canvas.getContext('2d'), 200);
   for(var i = 0; i < 1000; i++)
   {
     var im = new image();

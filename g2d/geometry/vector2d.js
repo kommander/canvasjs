@@ -7,7 +7,7 @@
  * Based on a AS3 implementation by jimisaacs (http://ji.dd.jimisaacs.com)
  */
 
-function Vector2D(x, y, angle) {
+kk.g2d.Vector2D = function(x, y, angle) {
   this.angle = angle;
   this.x = x;
   this.y = y;
@@ -18,8 +18,8 @@ function Vector2D(x, y, angle) {
    * m - how far to move 
    */
   this.move = function(a, m) {
-    this.x += Math.cos(Trig.radian(a)) * m;
-    this.y += Math.sin(Trig.radian(a)) * m;
+    this.x += Math.cos(kk.g2d.Trig.radian(a)) * m;
+    this.y += Math.sin(kk.g2d.Trig.radian(a)) * m;
   };
    
   /**
@@ -59,7 +59,7 @@ function Vector2D(x, y, angle) {
    * p - the geometric point 
    */
   this.angleTo = function(p) {
-    return this.angle = Trig.getAngle(this, p);
+    return this.angle = kk.g2d.Trig.getAngle(this, p);
   };
   
   /**
@@ -67,20 +67,20 @@ function Vector2D(x, y, angle) {
    * p - the geometric point 
    */
   this.distance = function(p) {
-    return Trig.getDistance(this, p);
+    return kk.g2d.Trig.getDistance(this, p);
   };
   
   /**
    * Get the distance without applying square root for comparison
    */
   this.comparableDistance = function(p) {
-    return Trig.getSquaredDistance(this, p);
+    return kk.g2d.Trig.getSquaredDistance(this, p);
   };
   
   /**
    * Returns a new vector with the same attributes as this
    */
   this.copy = function(){
-    return new Vector2D(this.x, this.y, this.angle);
+    return new kk.g2d.Vector2D(this.x, this.y, this.angle);
   };
 }

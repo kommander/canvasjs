@@ -1,6 +1,7 @@
 <html>
 <head>
   <title>Loop.js Line Animation Test</title>
+  <script type="text/javascript" src="../../canvas.js"></script>
   <script type="text/javascript" src="../loop.js"></script>
 </head>
 <body>
@@ -29,7 +30,7 @@ function randRange(minNum, maxNum)
   return (Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum);
 }
 
-var loop = new Loop(canvas.getContext('2d'), 150).showInfo(true);
+var loop = new kk.Loop(canvas.getContext('2d'), 150).showInfo(true);
 for(var i = 0; i < 400; i++)
   loop.push(new Line());
 loop.start();

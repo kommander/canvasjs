@@ -2,9 +2,10 @@
  * The Game
  * Copyright 2011 Sebastian Herrlinger
  */
-var SnakeGame = function(canvas, tileSize) {
+kk.g2d.snake = {};
+kk.g2d.snake.SnakeGame = function(canvas, tileSize) {
   
-  var _loop = new Loop(canvas.getContext('2d')),
+  var _loop = new kk.Loop(canvas.getContext('2d')),
   _running = false,
   _points = 0,
   _paused = false,
@@ -223,7 +224,7 @@ var SnakeGame = function(canvas, tileSize) {
   })(canvas.getContext('2d'));
   
   //Create the snake and add it
-  var _snake = new Snake(100, 200, 100, 2, 10, 75, _snakeCollided);
+  var _snake = new kk.g2d.snake.Snake(100, 200, 100, 2, 10, 75, _snakeCollided);
   
   //Add the game itself to the loop for game logic ticks
   _loop
@@ -284,7 +285,7 @@ var SnakeGame = function(canvas, tileSize) {
   /**
    * Key control input handling
    */
-  Input.bind(['i'], 'info', function(){
+  kk.Input.bind(['i'], 'info', function(){
     _showInfo = !_showInfo;
     _loop.showInfo(_showInfo);
   })
@@ -320,7 +321,7 @@ var SnakeGame = function(canvas, tileSize) {
 /**
  * The Snake itself
  */
-var Snake = function(x, y, length, direction, thickness, speed, collisionCallback){
+kk.g2d.snake.Snake = function(x, y, length, direction, thickness, speed, collisionCallback){
   var _nodes = [],
   _nodeIndex = 1,  
   _length = 0,

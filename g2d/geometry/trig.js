@@ -7,7 +7,7 @@
  * Based on a AS3 implementation by jimisaacs (http://ji.dd.jimisaacs.com)
  */
 
-var Trig = new (function() {
+kk.g2d.Trig = new (function() {
   
   /**
    * Convert a degree to a radian 

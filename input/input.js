@@ -10,7 +10,7 @@
  * Copyright 2011 Sebastian Herrlinger
  */
 
-var Input = new (function(){
+kk.Input = new (function(){
   //This is a map of the possible keyboard inputs we handle
   var _typeMap = {
     a: 65, b: 66, c: 67, d: 68, e: 69, f: 70, g: 71, h: 72, i: 73, j: 74, k: 75, l: 76, m: 77, n: 78, o: 79, p: 80,

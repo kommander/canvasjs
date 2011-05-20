@@ -9,7 +9,7 @@
  *
  * Copyright 2011 Sebastian Herrlinger
  */
-function Loop(context, frameRate)
+kk.Loop = function(context, frameRate)
 {
   var _context = context,
   _ticking = false,

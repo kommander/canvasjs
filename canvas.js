@@ -6,11 +6,14 @@
  * Url: sebastian.formzoo.com
  * License: MIT
  *
- * TODO: add namespaces
  * TODO: makefile with "make release"
  *
  * Copyright 2011 Sebastian Herrlinger
  */
+ 
+// Namespaces
+var kk = {};            // kosmokommando base namespace
+kk.g2d = {};            // All 2d
 
 /**
  * Bind a function to a specific context

@@ -1,6 +1,7 @@
 <html>
 <head>
   <title>Loop.js Bezier Animation Test</title>
+  <script type="text/javascript" src="../../canvas.js"></script>
   <script type="text/javascript" src="../loop.js"></script>
 </head>
 <body>
@@ -105,7 +106,7 @@ canvas.onmousemove = function(e){
   }
 }
 
-var loop = new Loop(canvas.getContext('2d'), 200)
+var loop = new kk.Loop(canvas.getContext('2d'), 200)
   .showInfo(true)
   .push(background)
   .push(currentBezier)
