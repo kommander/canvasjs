@@ -17,7 +17,7 @@ kk.Loop = function(context, frameRate)
   
   _lastTickTime = 0,
   _tickTimeDiff = 0,
-  _tickTimeout = 0x0,
+  _tickTimeout = null,
   
   _startTime = 0,
   _frameRate = frameRate,
@@ -145,9 +145,11 @@ kk.Loop = function(context, frameRate)
    * start the loop
    */ 
   this.start = function() {
-    _startTime = _lastTickTime = Date.now();
-    clearInterval(_tickTimeout);
-    _tickTimeout = setInterval(_tick, _frameRateTick);
+    if(_tickTimeout === null){
+      _startTime = _lastTickTime = Date.now();
+      clearInterval(_tickTimeout);
+      _tickTimeout = setInterval(_tick, _frameRateTick);
+    }
     return this;
   };
   
@@ -156,6 +158,7 @@ kk.Loop = function(context, frameRate)
    */
   this.stop = function() {
     clearInterval(_tickTimeout);
+    _tickTimeout = null;
     return this;
   };
   
@@ -193,5 +196,5 @@ kk.Loop = function(context, frameRate)
     _context.fillStyle = '#009999';
     _context.fillText(_objects.length + ' Objects ' + _fps + ' FPS', 5, 10);
     _context.restore();
-  }; 
+  };
 }
