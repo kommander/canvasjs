@@ -8,7 +8,7 @@ kk.g2d.obj.Stars = function(width, height, maxStars, speed, color, min, max, tim
   var _maxStars = maxStars || 0,
   _stars = [],
   _timeSecond = 0,
-  _starSize = null,
+  _starSize = [],
   _lineLength = 0,
   
   /**
@@ -42,7 +42,11 @@ kk.g2d.obj.Stars = function(width, height, maxStars, speed, color, min, max, tim
    * they get created randomly
    */
   this.starSize = function(min, max) {
-    _starSize = [min || 1, max || 4];
+    _starSize[0] = ((parseInt(min) || _starSize[0]) || 1);
+    _starSize[1] = ((parseInt(max) || _starSize[1]) || 4);
+    if(_starSize[0] > _starSize[1]){
+      throw Error('min must be <= max!');
+    }
     _createStars();
     return this;
   };

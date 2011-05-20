@@ -24,13 +24,18 @@
   <input id="starsMinus" type="button" value=" - " />
   <input id="starsPlus" type="button" value=" + " />
   <br/>
+  Minimum size: <input id="minimum" type="text" value="1" size="5" /><input id="applyMin" type="button" value="apply" />
+  <br/>
+  Maximum size: <input id="maximum" type="text" value="4" size="5" /><input id="applyMax" type="button" value="apply" />
+  <br/>
   Use Lines: <span id="lines">off</span>
   <input id="linesOnOff" type="button" value="on/off" />
   <br/>
   Line Scale: <span id="lineScale">0.10</span>
   <input id="lineScaleMinus" type="button" value=" - " />
   <input id="lineScalePlus" type="button" value=" + " />
-  
+  <br/>
+  Color: <input id="color" type="text" value="#eee" size="5" /><input id="applyColor" type="button" value="apply" />
 </div>
 
 <script type="text/javascript">
@@ -66,15 +71,17 @@ click('starsMinus', function(){
   $('stars').innerHTML = stars.maxStars();
 });
 
+click('applyMin', function(){
+  stars.starSize(document.getElementById('minimum').value);
+});
+
+click('applyMax', function(){
+  stars.starSize(null, document.getElementById('maximum').value);
+});
+
 click('linesOnOff', function(){
   stars.useLines = !stars.useLines;
-  if(stars.useLines) {
-    $('lines').innerHTML = 'on ';
-    stars.starSize(1, 2);
-  } else {
-    $('lines').innerHTML = 'off ';
-    stars.starSize(1, 4);
-  }
+  $('lines').innerHTML = (stars.useLines) ? 'on ' : 'off';
 });
 
 click('lineScalePlus', function(){
@@ -85,6 +92,10 @@ click('lineScalePlus', function(){
 click('lineScaleMinus', function(){
   stars.lineScale -= 0.01;
   $('lineScale').innerHTML = String(stars.lineScale + 0.001).substr(0, (stars.lineScale > 0) ? 4 : 5);
+});
+
+click('applyColor', function(){
+  stars.color = document.getElementById('color').value;
 });
 
 var loop = new kk.Loop(canvas.getContext('2d'), 200)
