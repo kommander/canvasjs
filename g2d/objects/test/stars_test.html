@@ -95,6 +95,10 @@ var loop = new kk.Loop(canvas.getContext('2d'), 200)
   })
   .push(stars)
   .start();
+
+//Stop the loop if the window looses focus and restart again after gaining focus
+window.addEventListener('blur', loop.stop.bind(loop), false);
+window.addEventListener('focus', loop.start.bind(loop), false);
 </script>
 </body>
 </html>
