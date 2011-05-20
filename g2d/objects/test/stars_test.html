@@ -8,18 +8,50 @@
 <body>
 <h1>Stars Animation Test</h1>
 <h2>A moving starfield as reusable object for Loop.js</h2>
-<canvas id="testCanvas" width="400" height="400" />
+<canvas id="testCanvas" width="400" height="400"></canvas><br/>
+Speed: <span id="speed">30</span>
+<input id="speedMinus" type="button" value=" - " />
+<input id="speedPlus" type="button" value=" + " />
+Stars: <span id="stars">500</span>
+<input id="starsMinus" type="button" value=" - " />
+<input id="starsPlus" type="button" value=" + " />
 
 <script type="text/javascript">
-var canvas = document.getElementById('testCanvas');
+function $(id) {
+  return document.getElementById(id);
+}
 
-var loop = new kk.Loop(canvas.getContext('2d'), 60)
+var canvas = $('testCanvas');
+
+var stars = new kk.g2d.obj.Stars(500, 30);
+
+$('speedPlus').addEventListener('click', function(){
+  stars.speed += 10;
+  $('speed').innerHTML = stars.speed;
+}, false);
+
+$('speedMinus').addEventListener('click', function(){
+  stars.speed -= 10;
+  $('speed').innerHTML = stars.speed;
+}, false);
+
+$('starsPlus').addEventListener('click', function(){
+  stars.maxStars(stars.maxStars() + 10);
+  $('stars').innerHTML = stars.maxStars();
+}, false);
+
+$('starsMinus').addEventListener('click', function(){
+  stars.maxStars(stars.maxStars() - 10);
+  $('stars').innerHTML = stars.maxStars();
+}, false);
+
+var loop = new kk.Loop(canvas.getContext('2d'), 200)
   .showInfo(true)
   .tickStart(false, function(c){
     c.fillStyle = '#1e2326';
     c.fillRect(0, 0, 400, 400);
   })
-  .push(new kk.g2d.obj.Stars(50, 30))
+  .push(stars)
   .start();
 </script>
 </body>
