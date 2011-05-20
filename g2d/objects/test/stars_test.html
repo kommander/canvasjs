@@ -4,46 +4,88 @@
   <script type="text/javascript" src="../../../canvas.js"></script>
   <script type="text/javascript" src="../../../loop/loop.js"></script>
   <script type="text/javascript" src="../stars.js"></script>
+  <style type="text/css">
+    #testCanvas {
+      float: left; 
+      padding-right: 20px;
+    }
+  </style>
 </head>
 <body>
 <h1>Stars Animation Test</h1>
 <h2>A moving starfield as reusable object for Loop.js</h2>
-<canvas id="testCanvas" width="400" height="400"></canvas><br/>
-Speed: <span id="speed">30</span>
-<input id="speedMinus" type="button" value=" - " />
-<input id="speedPlus" type="button" value=" + " />
-Stars: <span id="stars">500</span>
-<input id="starsMinus" type="button" value=" - " />
-<input id="starsPlus" type="button" value=" + " />
+<canvas id="testCanvas" width="400" height="400"></canvas>
+<div id="controls">
+  Speed: <span id="speed">30</span>
+  <input id="speedMinus" type="button" value=" - " />
+  <input id="speedPlus" type="button" value=" + " />
+  <br/>
+  Stars: <span id="stars">500</span>
+  <input id="starsMinus" type="button" value=" - " />
+  <input id="starsPlus" type="button" value=" + " />
+  <br/>
+  Use Lines: <span id="lines">off</span>
+  <input id="linesOnOff" type="button" value="on/off" />
+  <br/>
+  Line Scale: <span id="lineScale">0.10</span>
+  <input id="lineScaleMinus" type="button" value=" - " />
+  <input id="lineScalePlus" type="button" value=" + " />
+  
+</div>
 
 <script type="text/javascript">
 function $(id) {
   return document.getElementById(id);
 }
 
+function click(id, f){
+  $(id).addEventListener('click', f, false);
+}
+
 var canvas = $('testCanvas');
 
-var stars = new kk.g2d.obj.Stars(500, 30);
+var stars = new kk.g2d.obj.Stars(400, 400, 500, 30);
 
-$('speedPlus').addEventListener('click', function(){
+click('speedPlus', function(){
   stars.speed += 10;
   $('speed').innerHTML = stars.speed;
-}, false);
+});
 
-$('speedMinus').addEventListener('click', function(){
+click('speedMinus', function(){
   stars.speed -= 10;
   $('speed').innerHTML = stars.speed;
-}, false);
+});
 
-$('starsPlus').addEventListener('click', function(){
+click('starsPlus', function(){
   stars.maxStars(stars.maxStars() + 10);
   $('stars').innerHTML = stars.maxStars();
-}, false);
+});
 
-$('starsMinus').addEventListener('click', function(){
+click('starsMinus', function(){
   stars.maxStars(stars.maxStars() - 10);
   $('stars').innerHTML = stars.maxStars();
-}, false);
+});
+
+click('linesOnOff', function(){
+  stars.useLines = !stars.useLines;
+  if(stars.useLines) {
+    $('lines').innerHTML = 'on ';
+    stars.starSize(1, 2);
+  } else {
+    $('lines').innerHTML = 'off ';
+    stars.starSize(1, 4);
+  }
+});
+
+click('lineScalePlus', function(){
+  stars.lineScale += 0.01;
+  $('lineScale').innerHTML = String(stars.lineScale + 0.001).substr(0, (stars.lineScale > 0) ? 4 : 5);
+});
+
+click('lineScaleMinus', function(){
+  stars.lineScale -= 0.01;
+  $('lineScale').innerHTML = String(stars.lineScale + 0.001).substr(0, (stars.lineScale > 0) ? 4 : 5);
+});
 
 var loop = new kk.Loop(canvas.getContext('2d'), 200)
   .showInfo(true)
