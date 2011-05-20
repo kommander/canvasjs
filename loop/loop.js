@@ -26,8 +26,8 @@ kk.Loop = function(context, frameRate)
   //Stats
   _fps = 0,
   
-  _clearContext = function(context){
-    _context.clearRect(0, 0, _context.canvas.width, _context.canvas.height);
+  _clearContext = function(c){
+    c.clearRect(0, 0, c.canvas.width, c.canvas.height);
   },
   _switchObject = {
     showInfo: function(){},
@@ -51,7 +51,7 @@ kk.Loop = function(context, frameRate)
    * By default the loop clears the canvas context
    */
   this.tickStart = function(clear, what){
-    _switchObject.showInfo = (clear) ? _clearContext : (typeof(what) == 'function') ? what : function(){};
+    _switchObject.tickStart = (clear) ? _clearContext : (typeof(what) == 'function') ? what : function(){};
     return this;
   };
   

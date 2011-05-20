@@ -1,0 +1,26 @@
+<html>
+<head>
+  <title>Loop.js Line Animation Test</title>
+  <script type="text/javascript" src="../../../canvas.js"></script>
+  <script type="text/javascript" src="../../../loop/loop.js"></script>
+  <script type="text/javascript" src="../stars.js"></script>
+</head>
+<body>
+<h1>Stars Animation Test</h1>
+<h2>A moving starfield as reusable object for Loop.js</h2>
+<canvas id="testCanvas" width="400" height="400" />
+
+<script type="text/javascript">
+var canvas = document.getElementById('testCanvas');
+
+var loop = new kk.Loop(canvas.getContext('2d'), 60)
+  .showInfo(true)
+  .tickStart(false, function(c){
+    c.fillStyle = '#1e2326';
+    c.fillRect(0, 0, 400, 400);
+  })
+  .push(new kk.g2d.obj.Stars(50, 30))
+  .start();
+</script>
+</body>
+</html>
