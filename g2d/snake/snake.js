@@ -51,7 +51,7 @@ kk.g2d.snake.SnakeGame = function(canvas, tileSize) {
         context.fillStyle = '#1B7FF2';
         context.shadowColor = 'rgba(230, 230, 230, 0.7)';
         context.shadowBlur = _blur;
-        context.arc(this.x, this.y, _size, 0, Math.PI / 2 * 360, false);
+        context.arc(this.x, this.y, _size, 0, Math.PI * 2, false);
         context.fill();
         context.closePath();
         context.restore();
