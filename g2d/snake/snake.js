@@ -60,27 +60,13 @@ kk.g2d.snake.SnakeGame = function(canvas, tileSize) {
   ],
   _onlineCrunchies = [],
   _crunchyInterval = 0x0,
-  _points = 0,
-  _flashMessages = [],
-  _flashMessageTime = 1000,
-  _drawTextArgs = null;
+  _points = 0;
   
   this.visible = true;
   this.paused = false;
   
   /**
-   * Add a flash message for rendering
-   */
-  var _flashMessage = function(msg, color){
-    _flashMessages.push({
-      msg: msg,
-      color: color,
-      time: 0
-    });
-  };
-  
-  /**
-   * Checks for canvas boundaries, crunchy hits and flash messages
+   * Checks for canvas boundaries, crunchy hits
    * Draws the points
    */
   this.tick = function(context, tickTimeDiff){
@@ -94,103 +80,55 @@ kk.g2d.snake.SnakeGame = function(canvas, tileSize) {
           _onlineCrunchies[i].action(_snake);
           _points += _onlineCrunchies[i].points(_snake);
           _loop.remove(_onlineCrunchies[i]);
-          _flashMessage(_onlineCrunchies[i].points(_snake), '#fff');
+          _flash.msg(_onlineCrunchies[i].points(_snake), { color: '#fff' });
           _onlineCrunchies.splice(i, 1);
           break;
         }
       }
     };
     
-    _drawText(
-      context,
-      'Points: ' + _points,
-      5,
-      20,
-      '800 20px Comic Sans, Tahoma',
-      '#fff',
-      'left',
-      1,
-      'rgba(30, 30, 30, 0.7)',
-      2
-    );
+    context.save();
+    context.fillStyle = '#fff';
+    context.shadowColor = 'rgba(30, 30, 30, 0.7)';
+    context.shadowBlur = 2;
+    context.font = '800 20px Comic Sans, Tahoma';
+    context.translate(5, 20);
+    context.textAlign = 'left';
+    context.fillText('Points: ' + _points, 0, 0);
+    context.restore();
     
     //Pause Message
     if(_paused){
-      _drawText(
-        context,
-        'PAUSED',
-        context.canvas.width / 2,
-        context.canvas.width / 2,
-        '800 50px Comic Sans, Tahoma',
-        '#1B7FF2',
-        'center',
-        1,
-        'rgba(255, 255, 255, 0.8)',
-        5
-      );
+      context.save();
+      context.fillStyle = '#1B7FF2';
+      context.shadowColor = 'rgba(255, 255, 255, 0.8)';
+      context.shadowBlur = 5;
+      context.font = '800 40px Comic Sans, Tahoma';
+      context.translate(context.canvas.width / 2, context.canvas.height / 2);
+      context.textAlign = 'center';
+      context.fillText('PAUSED', 0, 0);
+      context.restore();
     }
     
     //Pause Message
     if(!_running){
-      _drawText(
-        context,
-        'PRESS SPACE\nTO START A NEW GAME',
-        context.canvas.width / 2,
-        context.canvas.width / 2,
-        '800 20px Comic Sans, Tahoma',
-        '#1B7FF2',
-        'center',
-        1,
-        'rgba(255, 255, 255, 0.8)',
-        5
-      );
-    }
-    
-    //Draw flash messages
-    for(var i = 0; i < _flashMessages.length; i++){
-      _flashMessages[i].time += tickTimeDiff;
-      if(_flashMessages[i].time >= _flashMessageTime){
-        _flashMessages.splice(i, 1);
-        continue;
-      }
-      _drawText(
-        context,
-        _flashMessages[i].msg,
-        context.canvas.width / 2,
-        context.canvas.width / 2 - _flashMessages[i].time * 0.15,
-        '800 50px Comic Sans, Tahoma',
-        _flashMessages[i].color,
-        'center',
-        1.5 - _flashMessages[i].time * 0.0015,
-        'rgba(200, 200, 200, ' + context.globalAlpha + ')',
-        10
-      );
-    }
+      context.save();
+      context.fillStyle = '#1B7FF2';
+      context.shadowColor = 'rgba(255, 255, 255, 0.8)';
+      context.shadowBlur = 5;
+      context.font = '800 20px Comic Sans, Tahoma';
+      context.translate(context.canvas.width / 2, context.canvas.height / 2);
+      context.textAlign = 'center';
+      context.fillText('PRESS SPACE\nTO START A NEW GAME', 0, 0);
+      context.restore();
+    }    
   };
-  
-  /**
-   * Draw some text to the canvas
-   * Arguments [context, msg, x, y, font, fillStyle, textAlign, alpha, shadowColor, shadowBlur]
-   */
-  var _drawText = function(){
-    _drawTextArgs = arguments;
-    _drawTextArgs[0].save();
-    _drawTextArgs[0].globalAlpha = _drawTextArgs[7];
-    _drawTextArgs[0].fillStyle = _drawTextArgs[5];
-    _drawTextArgs[0].shadowColor = _drawTextArgs[8];
-    _drawTextArgs[0].shadowBlur = _drawTextArgs[9];
-    _drawTextArgs[0].font = _drawTextArgs[4];
-    _drawTextArgs[0].translate(_drawTextArgs[2], _drawTextArgs[3]);
-    _drawTextArgs[0].textAlign = _drawTextArgs[6];
-    _drawTextArgs[0].fillText(_drawTextArgs[1], 0, 0);
-    _drawTextArgs[0].restore();
-  }
   
   /**
    * Randomly adds new crunchies 
    */
   var _crunchy = function(){
-    var newCrunchy = new _crunchies[0](_randRange(0, canvas.width), _randRange(0, canvas.height));
+    var newCrunchy = new _crunchies[0](kk.rand(0, canvas.width), kk.rand(0, canvas.height));
     _onlineCrunchies.push(newCrunchy);
     _loop.addBefore(newCrunchy, _snake);
   };
@@ -199,7 +137,7 @@ kk.g2d.snake.SnakeGame = function(canvas, tileSize) {
    * The callback for the Snake object when it collided
    */
   var _snakeCollided = function(){
-    _flashMessage('CRASH!', '#FF4400');
+    _flash.msg('CRASH!', { color: '#FF4400' });
     clearInterval(_crunchyInterval);
     _snake.paused = true;
     _running = false;
@@ -226,10 +164,14 @@ kk.g2d.snake.SnakeGame = function(canvas, tileSize) {
   //Create the snake and add it
   var _snake = new kk.g2d.snake.Snake(100, 200, 100, 2, 10, 75, _snakeCollided);
   
+  //Create a FlashText instance to show gathered points animated
+  var _flash = new kk.g2d.obj.FlashText({ x: canvas.width / 2, y: canvas.height / 2, font: '800 40px Comic Sans, Tahoma' });
+  
   //Add the game itself to the loop for game logic ticks
   _loop
     .push(_background)
     .push(_snake)
+    .push(_flash)
     .push(this)
     .frameRate(60);
   
@@ -247,8 +189,10 @@ kk.g2d.snake.SnakeGame = function(canvas, tileSize) {
   var _restart = function(){
     _running = true;
     _points = 0;
+    
     _snake.reset(100, 200, 100, 2, 10, 75);
     _snake.paused = false;
+    
     //Remove crunchies
     for(var i = 0; i < _onlineCrunchies.length; i++)
       _loop.remove(_onlineCrunchies[i]);
@@ -285,22 +229,22 @@ kk.g2d.snake.SnakeGame = function(canvas, tileSize) {
   /**
    * Key control input handling
    */
-  kk.Input.bind(['i'], 'info', function(){
+  kk.Input.bind('i', 'info', function(){
     _showInfo = !_showInfo;
     _loop.showInfo(_showInfo);
   })
-  .bind(['l'], 'linestyle', function(){
+  .bind('l', 'linestyle', function(){
     _snake.dashed(!_snake.dashed());
   })
-  .bind(['a', 'left'], 'left', _snake.move.bind(_snake, 2))
-  .bind(['w', 'up'], 'up', _snake.move.bind(_snake, 0))
-  .bind(['s', 'down'], 'down', _snake.move.bind(_snake, 1))
-  .bind(['d', 'right'], 'right', _snake.move.bind(_snake, 3))
-  .bind(['space'], 'start', function(){
+  .bind(['a', 'left'], 'left', function(){ _snake.move(2); })
+  .bind(['w', 'up'], 'up', function(){ _snake.move(0); })
+  .bind(['s', 'down'], 'down', function(){ _snake.move(1); })
+  .bind(['d', 'right'], 'right', function(){ _snake.move(3); })
+  .bind('space', 'start', function(){
     if(!_running && !_paused)
       _restart();
   })
-  .bind(['p'], 'pause', function(){
+  .bind('p', 'pause', function(){
     if(_running){
       if(_paused)
         _this.resume();
@@ -308,14 +252,6 @@ kk.g2d.snake.SnakeGame = function(canvas, tileSize) {
         _this.pause();
     }
   });
-  
-  /**
-   * Get a random number between a min and a max number
-   */
-  var _randRange = function(minNum, maxNum) 
-  {
-    return (Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum);
-  }
 };
 
 /**
@@ -333,7 +269,8 @@ kk.g2d.snake.Snake = function(x, y, length, direction, thickness, speed, collisi
   _thickness = 0,
   _halfThickness = 0,
   _collisionCallback = collisionCallback,
-  _dashed = false;
+  _dashed = false,
+  _tail = {};
   
   /**
    * Flip the dashed linesstyle on and off
@@ -399,11 +336,6 @@ kk.g2d.snake.Snake = function(x, y, length, direction, thickness, speed, collisi
     switch(_currentDirection){
       //top
       case 0:
-        if(n1.y != n2.y || !((n0.x > n1.x && n0.x < n2.x) || (n0.x < n1.x && n0.x > n2.x)))
-          break;
-        if(Math.abs(n0.y - n1.y) < _movedDistance)
-          _collided.call(this);
-        break;
       //bottom
       case 1:
         if(n1.y != n2.y || !((n0.x > n1.x && n0.x < n2.x) || (n0.x < n1.x && n0.x > n2.x)))
@@ -413,11 +345,6 @@ kk.g2d.snake.Snake = function(x, y, length, direction, thickness, speed, collisi
         break;
       //left
       case 2:
-        if(n1.x != n2.x || !((n0.y > n1.y && n0.y < n2.y) || (n0.y < n1.y && n0.y > n2.y)))
-          break;
-        if(Math.abs(n0.x - n1.x) < _movedDistance)
-          _collided.call(this);
-        break;
       //right
       case 3:
         if(n1.x != n2.x || !((n0.y > n1.y && n0.y < n2.y) || (n0.y < n1.y && n0.y > n2.y)))
@@ -486,30 +413,12 @@ kk.g2d.snake.Snake = function(x, y, length, direction, thickness, speed, collisi
         _nodeIndex--;
       }
     }
-      
-    //remove rest directions
-    switch(_nodes[_nodeIndex].d){
-      //top
-      case 0:
-        context.lineTo(_nodes[_nodeIndex].x, _nodes[_nodeIndex].y + _rest);
-        _checkCollision.call(this, _nodes[0], _nodes[_nodeIndex], {x: _nodes[_nodeIndex].x, y: _nodes[_nodeIndex].y + _rest});
-        break;
-      //bottom
-      case 1:
-        context.lineTo(_nodes[_nodeIndex].x, _nodes[_nodeIndex].y - _rest);
-        _checkCollision.call(this, _nodes[0], _nodes[_nodeIndex], {x: _nodes[_nodeIndex].x, y: _nodes[_nodeIndex].y - _rest});
-        break;
-      //left
-      case 2:
-        context.lineTo(_nodes[_nodeIndex].x + _rest, _nodes[_nodeIndex].y);
-        _checkCollision.call(this, _nodes[0], _nodes[_nodeIndex], {x: _nodes[_nodeIndex].x + _rest, y: _nodes[_nodeIndex].y});
-        break;
-      //right
-      case 3:
-        context.lineTo(_nodes[_nodeIndex].x - _rest, _nodes[_nodeIndex].y);
-        _checkCollision.call(this, _nodes[0], _nodes[_nodeIndex], {x: _nodes[_nodeIndex].x - _rest, y: _nodes[_nodeIndex].y});
-        break;
-    }
+    
+    //Tail
+    _tail.x = (_nodes[_nodeIndex].d == 0 || _nodes[_nodeIndex].d == 1) ? _nodes[_nodeIndex].x : (_nodes[_nodeIndex].d == 2) ? _nodes[_nodeIndex].x + _rest : _nodes[_nodeIndex].x - _rest;
+    _tail.y = (_nodes[_nodeIndex].d == 2 || _nodes[_nodeIndex].d == 3) ? _nodes[_nodeIndex].y : (_nodes[_nodeIndex].d == 1) ? _nodes[_nodeIndex].y - _rest : _nodes[_nodeIndex].y + _rest;
+    context.lineTo(_tail.x, _tail.y);
+    _checkCollision.call(this, _nodes[0], _nodes[_nodeIndex], _tail);
     
     context.stroke();
     context.closePath();
