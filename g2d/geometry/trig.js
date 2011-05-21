@@ -8,26 +8,27 @@
  */
 
 kk.g2d.Trig = new (function() {
+  var _PI180 = Math.PI / 180;
   
   /**
    * Convert a degree to a radian 
    */
   this.radian = function(d) {
-    return d * (Math.PI / 180);
+    return d * _PI180;
   };
  
   /**
    * Convert a radian to a degree 
    */
   this.degree = function(r) {
-    return r / (Math.PI / 180);
+    return r / _PI180;
   };
  
   /**
    * Find the angle of trajectory from two given points 
    */
   this.getAngle = function(a, b) {
-    return (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
+    return Math.atan2(b.y - a.y, b.x - a.x) / _PI180;
   };
  
   /**
