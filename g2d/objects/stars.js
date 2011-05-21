@@ -11,6 +11,7 @@ kk.g2d.obj.Stars = function(width, height, maxStars, speed, color, min, max, tim
   _starSize = [],
   _lineLength = 0,
   _color = color || '#eee',
+  _PI2 = Math.PI * 2;
   
   /**
    * Generates the star objects depending on the settings,
@@ -110,7 +111,7 @@ kk.g2d.obj.Stars = function(width, height, maxStars, speed, color, min, max, tim
           context.lineTo(_stars[i].x, _stars[i].y);
           context.stroke();
         } else {
-          context.arc(_stars[i].x, _stars[i].y, _stars[i].size * 0.5, 0, Math.PI * 2, false);
+          context.arc(_stars[i].x, _stars[i].y, _stars[i].size * 0.5, 0, _PI2, false);
           context.fill();
         }
         context.closePath();
