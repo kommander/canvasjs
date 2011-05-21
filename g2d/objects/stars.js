@@ -44,6 +44,9 @@ kk.g2d.obj.Stars = function(width, height, maxStars, speed, color, min, max, tim
   this.useLines = useLines || false;
   this.lineScale = lineScale || 0.1;
   
+  this.x = 0;
+  this.y = 0;
+  
   //How fast are the stars moving in pixel per second
   //The stars own speed is the general speed times their size
   this.speed = speed || 10;
@@ -91,15 +94,19 @@ kk.g2d.obj.Stars = function(width, height, maxStars, speed, color, min, max, tim
    */
   this.tick = function(context, timeDiff){
     _timeSecond = timeDiff * 0.001;
+    context.save()
+    context.translate(this.x, this.y);
     for(var i = 0; i < _maxStars; i++){
+      if(_stars[i].x + this.x <  -_stars[i].size || _stars[i].x + this.x > this.width + _stars[i].size)
+        continue;
       context.fillStyle = _stars[i].color;
       context.strokeStyle = _stars[i].color;
       _lineLength = (this.useLines) ? this.lineScale * this.speed * _stars[i].size: _stars[i].size;
       _stars[i].timeout -= timeDiff;
       if((this.speed > 0 && _stars[i].y > this.height + _lineLength)
         || (this.speed < 0 && _stars[i].y < _lineLength)){
-        _stars[i].y = this.speed > 0 ? -_stars[i].size : this.height + 10;
-        _stars[i].x = kk.rand(10, this.width - 10);
+        _stars[i].y = this.speed > 0 ? -_lineLength : this.height + _lineLength;
+        _stars[i].x = kk.rand(_stars[i].size, this.width - _stars[i].size);
         _stars[i].timeout = kk.rand(0, this.timeout);
       }
       else if(_stars[i].timeout <= 0){
@@ -117,5 +124,6 @@ kk.g2d.obj.Stars = function(width, height, maxStars, speed, color, min, max, tim
         context.closePath();
       }
     }
+    context.restore();
   };
 };

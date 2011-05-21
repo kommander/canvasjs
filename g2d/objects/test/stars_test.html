@@ -36,6 +36,11 @@
   <input id="lineScalePlus" type="button" value=" + " />
   <br/>
   Color(s): <input id="color" type="text" value="#eee" size="10" /><input id="applyColor" type="button" value="apply" /> (Comma separated)
+  <br/>
+  X: <span id="x">-200</span>
+  <input id="xMinus" type="button" value=" - " />
+  <input id="xPlus" type="button" value=" + " />
+  <br/>
 </div>
 
 <script type="text/javascript">
@@ -49,7 +54,8 @@ function click(id, f){
 
 var canvas = $('testCanvas');
 
-var stars = new kk.g2d.obj.Stars(400, 400, 500, 30);
+var stars = new kk.g2d.obj.Stars(800, 400, 500, 30);
+stars.x = -200;
 
 click('speedPlus', function(){
   stars.speed += 10;
@@ -92,6 +98,16 @@ click('lineScalePlus', function(){
 click('lineScaleMinus', function(){
   stars.lineScale -= 0.01;
   $('lineScale').innerHTML = String(stars.lineScale + 0.001).substr(0, (stars.lineScale > 0) ? 4 : 5);
+});
+
+click('xPlus', function(){
+  stars.x += 1;
+  $('x').innerHTML = stars.x;
+});
+
+click('xMinus', function(){
+  stars.x -= 1;
+  $('x').innerHTML = stars.x;
 });
 
 click('applyColor', function(){
