@@ -1,0 +1,72 @@
+<html>
+<head>
+  <title>FlashText Animation Test</title>
+  <script type="text/javascript" src="../../../canvas.js"></script>
+  <script type="text/javascript" src="../../../dom.js"></script>
+  <script type="text/javascript" src="../../../loop/loop.js"></script>
+  <script type="text/javascript" src="../flashtext.js"></script>
+  <style type="text/css">
+    #testCanvas {
+      float: left; 
+      padding-right: 20px;
+    }
+  </style>
+</head>
+<body>
+<h1>FlashText Animation Test</h1>
+<h2>Animated Text as reusable object for Loop.js</h2>
+<canvas id="testCanvas" width="400" height="400"></canvas>
+<div id="controls">
+  <input id="msg" type="text" value="PocketRocket!" /><input id="spawn" type="button" value="spawn" />
+  <br/>
+  Msgs. per second: <input id="perSecond" type="text" value="10" size="3" />
+  <input id="run" type="button" value="run" /><input id="stop" type="button" value="stop" />
+</div>
+
+<script type="text/javascript">
+var canvas = kk.$('#testCanvas');
+
+var flashText = new kk.g2d.obj.FlashText({ x: canvas.width / 2, y: canvas.height - 100, font: '800 50px Tahoma, Helvetica, Arial', color: '#00efef', timeout: 1500 });
+var run = {
+  perSecond: 0,
+  lastSpawn: 0,
+  tick: function(context, timeDiff){
+    if(this.perSecond <= 0)
+      return;
+    this.lastSpawn += timeDiff;
+    if(this.lastSpawn >= (1000 / this.perSecond)){
+      flashText.msg(kk.$('#msg').value);
+      this.lastSpawn -= (1000 / this.perSecond);
+    }
+    
+  }
+};
+
+kk.$('#spawn').click(function(){
+  flashText.msg(kk.$('#msg').value);
+});
+
+kk.$('#run').click(function(){
+  run.perSecond = parseInt(kk.$('#perSecond').value);
+});
+
+kk.$('#stop').click(function(){
+  run.perSecond = 0;
+});
+
+var loop = new kk.Loop(canvas.getContext('2d'), 60)
+  .showInfo(true)
+  .tickStart(false, function(c){
+    c.fillStyle = '#1e2326';
+    c.fillRect(0, 0, 400, 400);
+  })
+  .push(flashText)
+  .push(run)
+  .start();
+
+//Stop the loop if the window looses focus and restart again after gaining focus
+window.addEventListener('blur', loop.stop.bind(loop), false);
+window.addEventListener('focus', loop.start.bind(loop), false);
+</script>
+</body>
+</html>
