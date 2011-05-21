@@ -2,6 +2,7 @@
 <head>
   <title>Stars Animation Test</title>
   <script type="text/javascript" src="../../../canvas.js"></script>
+  <script type="text/javascript" src="../../../dom.js"></script>
   <script type="text/javascript" src="../../../loop/loop.js"></script>
   <script type="text/javascript" src="../stars.js"></script>
   <style type="text/css">
@@ -44,74 +45,66 @@
 </div>
 
 <script type="text/javascript">
-function $(id) {
-  return document.getElementById(id);
-}
-
-function click(id, f){
-  $(id).addEventListener('click', f, false);
-}
-
-var canvas = $('testCanvas');
+var canvas = kk.$('#testCanvas');
 
 var stars = new kk.g2d.obj.Stars(800, 400, 500, 30);
 stars.x = -200;
 
-click('speedPlus', function(){
+kk.$('#speedPlus').click(function(){
   stars.speed += 10;
-  $('speed').innerHTML = stars.speed;
+  kk.$('#speed').innerHTML = stars.speed;
 });
 
-click('speedMinus', function(){
+kk.$('#speedMinus').click(function(){
   stars.speed -= 10;
-  $('speed').innerHTML = stars.speed;
+  kk.$('#speed').innerHTML = stars.speed;
 });
 
-click('starsPlus', function(){
+kk.$('#starsPlus').click(function(){
   stars.maxStars(stars.maxStars() + 10);
-  $('stars').innerHTML = stars.maxStars();
+  kk.$('#stars').innerHTML = stars.maxStars();
 });
 
-click('starsMinus', function(){
+kk.$('#starsMinus').click(function(){
   stars.maxStars(stars.maxStars() - 10);
-  $('stars').innerHTML = stars.maxStars();
+  kk.$('#stars').innerHTML = stars.maxStars();
 });
 
-click('applyMin', function(){
-  stars.starSize($('minimum').value);
+kk.$('#applyMin').click(function(){
+  stars.starSize(kk.$('#minimum').value);
 });
 
-click('applyMax', function(){
-  stars.starSize(null, $('maximum').value);
+kk.$('#applyMax').click(function(){
+  stars.starSize(null, kk.$('#maximum').value);
 });
 
-click('linesOnOff', function(){
+kk.$('#linesOnOff').click(function(){
   stars.useLines = !stars.useLines;
-  $('lines').innerHTML = (stars.useLines) ? 'on ' : 'off';
+  kk.$('#lines').innerHTML = (stars.useLines) ? 'on ' : 'off';
 });
 
-click('lineScalePlus', function(){
+kk.$('#lineScalePlus').click(function(){
   stars.lineScale += 0.01;
-  $('lineScale').innerHTML = String(stars.lineScale + 0.001).substr(0, (stars.lineScale > 0) ? 4 : 5);
+  kk.$('#lineScale').innerHTML = String(stars.lineScale + 0.001).substr(0, (stars.lineScale > 0) ? 4 : 5);
 });
 
-click('lineScaleMinus', function(){
+kk.$('#lineScaleMinus').click(function(){
   stars.lineScale -= 0.01;
-  $('lineScale').innerHTML = String(stars.lineScale + 0.001).substr(0, (stars.lineScale > 0) ? 4 : 5);
+  kk.$('#lineScale').innerHTML = String(stars.lineScale + 0.001).substr(0, (stars.lineScale > 0) ? 4 : 5);
 });
 
-click('xPlus', function(){
+kk.$('#xPlus').click(function(){
   stars.x += 1;
-  $('x').innerHTML = stars.x;
+  kk.$('#x').innerHTML = stars.x;
 });
 
-click('xMinus', function(){
+kk.$('#xMinus').click(function(){
   stars.x -= 1;
-  $('x').innerHTML = stars.x;
+  kk.$('#x').innerHTML = stars.x;
 });
 
-click('applyColor', function(){
-  stars.color(($('color').value.match(/,/)) ? $('color').value.split(',') : $('color').value);
+kk.$('#applyColor').click(function(){
+  stars.color((kk.$('#color').value.match(/,/)) ? kk.$('#color').value.split(',') : kk.$('#color').value);
 });
 
 var loop = new kk.Loop(canvas.getContext('2d'), 200)
