@@ -13,8 +13,6 @@
 
 kk.$ = function(selector) {
   var _typeOf = (function(selector) {
-    if(typeof(selector) == 'function')
-      throw new Error('fff');
     if(typeof(selector) == 'object') {
       return selector;
     } else if(typeof(selector) == 'string') {
