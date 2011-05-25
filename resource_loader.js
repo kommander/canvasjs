@@ -12,7 +12,7 @@ kk.ResourceLoader = function(){
     allLoaded: function(){},
     loaded: function(){},
     error: function(){},
-    update: function(){}s
+    update: function(){}
   },
   
   /**
