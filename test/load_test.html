@@ -9,6 +9,7 @@
 <h1>Resource Loader Test</h1>
 <h2>Load different resources</h2>
 Load (Object): <span id="loadObject">waiting.</span></br>
+Load (Object in Object): <span id="loadObjectInObject">waiting.</span></br>
 Load (String): <span id="loadString">waiting.</span></br>
 Load (Array): <span id="loadArray">waiting.</span></br>
 Load Error: <span id="loadError">waiting.</span></br>
@@ -25,7 +26,12 @@ var loader = new kk.ResourceLoader()
       kk.$('#loadError').innerHTML = 'success';
   })
   .add({
-    one: 'img/character_sprite.png',
+    one: {
+      src: 'img/character_sprite.png',
+      loaded: function(resource) {
+        kk.$('#loadObjectInObject').innerHTML = 'success';
+      }
+    },
     two: 'img/no_file.png',
     three: 'img/character_sprite02.png'
   })

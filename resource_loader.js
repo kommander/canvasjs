@@ -21,7 +21,7 @@ kk.ResourceLoader = function(){
   _evtHandler = function(resource, evt) {
     _counter++;
     _events['update'](_counter);
-    if(evt.type == 'loaded') {
+    if(evt.type == 'load') {
       resource.state = 'loaded';
       _events['loaded'](resource, _counter);
       if(typeof(resource.loaded) == 'function') {
