@@ -1,0 +1,56 @@
+<html>
+<head>
+  <title>Resource Loader Test</title>
+  <script type="text/javascript" src="../canvas.js"></script>
+  <script type="text/javascript" src="../dom.js"></script>
+  <script type="text/javascript" src="../resource_loader.js"></script>
+</head>
+<body>
+<h1>Resource Loader Test</h1>
+<h2>Load different resources</h2>
+Load (Object): <span id="loadObject">waiting.</span></br>
+Load (String): <span id="loadString">waiting.</span></br>
+Load (Array): <span id="loadArray">waiting.</span></br>
+Load Error: <span id="loadError">waiting.</span></br>
+
+<script type="text/javascript">
+
+//Test resource objects
+var loader = new kk.ResourceLoader()
+  .listen('allLoaded', function(count){
+    kk.$('#loadObject').innerHTML = 'success';
+  })
+  .listen('error', function(resource){
+    if(resource.name == 'two')
+      kk.$('#loadError').innerHTML = 'success';
+  })
+  .add({
+    one: 'img/character_sprite.png',
+    two: 'img/no_file.png',
+    three: 'img/character_sprite02.png'
+  })
+  .load();
+
+//Test resource Array
+loader = new kk.ResourceLoader()
+  .listen('allLoaded', function(count){
+    kk.$('#loadArray').innerHTML = 'success';
+  })
+  .add([
+    'img/character_sprite.png',
+    'img/character_sprite02.png'
+  ])
+  .load();
+  
+//Test resource strings
+loader = new kk.ResourceLoader()
+  .listen('allLoaded', function(count){
+    kk.$('#loadString').innerHTML = 'success';
+  })
+  .add('img/character_sprite.png')
+  .add('img/character_sprite02.png')
+  .load();
+
+</script>
+</body>
+</html>
