@@ -20,10 +20,11 @@ kk.g2d.obj = {};        // Reusable 2d loop objects
  * Bind a function to a specific context
  */
 if(!Function.prototype.bind){
-  Function.prototype.bind= function(to){
+  Function.prototype.bind = function(){
+    var _args = arguments;
     var _self = this;
     return function(){
-      return _self.apply((to) ? to : null, Array.prototype.slice.call(arguments));
+      return _self.apply((_args[0]) ? _args[0] : null, Array.prototype.slice.call(_args, 1).concat(Array.prototype.slice.call(arguments)));
     }
   };
 }
