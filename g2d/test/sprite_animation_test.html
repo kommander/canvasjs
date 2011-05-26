@@ -1,0 +1,43 @@
+<html>
+<head>
+  <title>Sprite Animation Test</title>
+  <script type="text/javascript" src="../../canvas.js"></script>
+  <script type="text/javascript" src="../../dom.js"></script>
+  <script type="text/javascript" src="../../resource_loader.js"></script>
+  <script type="text/javascript" src="../../loop/loop.js"></script>
+  <script type="text/javascript" src="../sprite.js"></script>
+  <script type="text/javascript" src="../sprite_animation.js"></script>
+</head>
+<body>
+<h1>Sprite Animation Test</h1>
+<h2>Rendering a sprite tile</h2>
+<canvas id="testCanvas" width="400" height="400" />
+
+<script type="text/javascript">
+var canvas = kk.$('#testCanvas');
+var loop = new kk.Loop(canvas.getContext('2d')).showInfo(false, function(context) {
+    context.save();
+    context.font = '800 30px Helvetica, Arial, sans-serif';
+    context.fillStyle = '#000';
+    context.fillText(loop.size() + ' Objects ' + loop.fps() + ' FPS', 5, 30);
+    context.restore();
+  });
+var animation = null;
+
+var loader = new kk.ResourceLoader()
+  .add('../../test/img/character_sprite02.png')
+  .listen('allLoaded', function() {
+    var sprite = new kk.g2d.Sprite(loader.get(0).data, 24, 32);
+    for(var i = 0; i < 500; i++){
+      var animation = new kk.g2d.SpriteAnimation(sprite);
+      animation.x = kk.rand(0, 400);
+      animation.y = kk.rand(0, 400);
+      animation.setup('walkLeft', [36, 37, 38], { frameTime: 150, bounce: true });
+      loop.push(animation).start();
+      animation.play('walkLeft');
+    }
+  })
+  .load();
+</script>
+</body>
+</html>
