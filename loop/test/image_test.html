@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>Loop.js Image Animation Test</h1>
-<h2>Rendering 1000 32x32px images per second, randomly positioned with max 200 fps</h2>
+<h2>Rendering 1000 32x32px images per frame, randomly positioned with max 60 fps</h2>
 <canvas id="testCanvas" width="1024" height="768" />
 <script type="text/javascript">
 var canvas = document.getElementById('testCanvas');
@@ -15,7 +15,7 @@ var img = new Image();
 img.src = 'img/tile01.png';
 
 img.onload = function(){
-  var loop = new kk.Loop(canvas.getContext('2d'), 200);
+  var loop = new kk.Loop(canvas.getContext('2d'), 60);
   for(var i = 0; i < 1000; i++)
   {
     var im = new image();

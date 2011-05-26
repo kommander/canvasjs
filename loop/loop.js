@@ -20,8 +20,8 @@ kk.Loop = function(context, frameRate)
   _tickTimeout = null,
   
   _startTime = 0,
-  _frameRate = frameRate,
-  _frameRateTick = 1000 / frameRate,
+  _frameRate = frameRate || 60,
+  _frameRateTick = 1000 / _frameRate,
   
   //Stats
   _fps = 0,
@@ -132,7 +132,7 @@ kk.Loop = function(context, frameRate)
     }
     
     _fps = Math.round(1000 / _tickTimeDiff);
-    _switchObject.showInfo.call(this);
+    _switchObject.showInfo.call(this, _context);
     
     _ticking = false;
     
@@ -179,6 +179,13 @@ kk.Loop = function(context, frameRate)
     return _fps;
   };
   
+  /** 
+   * How many objects are in the loop
+   */
+  this.size = function(){
+    return _objects.length;
+  };
+  
   /**
    * Checks if the object we want to add has a tick method we can call in the loop
    */
@@ -190,11 +197,11 @@ kk.Loop = function(context, frameRate)
   /**
    * Draws the information string on the canvas if showInfo is true
    */
-  var _drawInfo = function() {
-    _context.save();
-    _context.font = '800 10px Helvetica, Arial, sans-serif';
-    _context.fillStyle = '#009999';
-    _context.fillText(_objects.length + ' Objects ' + _fps + ' FPS', 5, 10);
-    _context.restore();
+  var _drawInfo = function(context) {
+    context.save();
+    context.font = '800 10px Helvetica, Arial, sans-serif';
+    context.fillStyle = '#009999';
+    context.fillText(_objects.length + ' Objects ' + _fps + ' FPS', 5, 10);
+    context.restore();
   };
 }
