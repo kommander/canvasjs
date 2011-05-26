@@ -124,7 +124,7 @@ kk.g2d.SpriteAnimation = function(sprite){
     _playing.time += tickTimeDiff;
     if(_playing.time >= _playing.frameTime){
       _playing.play();
-      _playing.time -= _playing.frameTime;
+      _playing.time %= _playing.frameTime;
     }
     _playing.frames[_playing.pos](context);
     context.restore();
