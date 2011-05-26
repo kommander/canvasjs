@@ -11,7 +11,7 @@ kk.ResourceLoader = function(){
   _events = {
     allLoaded: function(){},
     loaded: function(){},
-    error: function(){},
+    error: null,
     update: function(){}
   },
   
@@ -29,7 +29,10 @@ kk.ResourceLoader = function(){
       }
     } else {
       resource.state = evt.type;
-      _events['error'](resource);
+      if(typeof(_events['error']) == 'function')
+        _events['error'](resource, evt);
+      else
+        throw new Error('Unhandled ResourceLoader error!');
     }
          
     if(_counter == _resources.length){
