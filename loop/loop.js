@@ -21,7 +21,7 @@ kk.Loop = function(context, frameRate)
   
   _startTime = 0,
   _frameRate = frameRate || 60,
-  _frameRateTick = 1000 / _frameRate,
+  _frameRateTick = Math.round(1000 / _frameRate),
   
   //Stats
   _fps = 0,
@@ -132,7 +132,7 @@ kk.Loop = function(context, frameRate)
     }
     
     _fps = Math.round(1000 / _tickTimeDiff);
-    _switchObject.showInfo.call(this, _context);
+    _switchObject.showInfo.call(this, _context, _tickTimeDiff);
     
     _ticking = false;
     
@@ -167,7 +167,8 @@ kk.Loop = function(context, frameRate)
    */
   this.frameRate = function(fps) {
     _frameRate = fps;
-    _frameRateTick = 1000 / _frameRate;
+    _frameRateTick = Math.round(1000 / _frameRate);
+    this.stop();
     this.start();
     return this;
   };
