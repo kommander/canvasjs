@@ -2,6 +2,8 @@
  * SpriteAnimation
  * Animates a series of tiles
  *
+ * TODO: on stop render last frame of the sprite
+ *
  * Copyright 2011 Sebastian Herrlinger
  */
 kk.g2d.SpriteAnimation = function(sprite){
@@ -98,14 +100,14 @@ kk.g2d.SpriteAnimation = function(sprite){
    * play from the current position to another
    */
   this.playTo = function(name, to) {
-    
+    //TODO: implement
   };
   
   /**
    * play from the given position to another
    */
   this.playFromTo = function(name, from, to) {
-    
+    //TODO: implement
   };
   
   /**
@@ -124,7 +126,7 @@ kk.g2d.SpriteAnimation = function(sprite){
     _playing.time += tickTimeDiff;
     if(_playing.time >= _playing.frameTime){
       _playing.play();
-      _playing.time %= _playing.frameTime;
+      _playing.time -= _playing.frameTime;
     }
     _playing.frames[_playing.pos](context);
     context.restore();
