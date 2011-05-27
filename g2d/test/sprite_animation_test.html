@@ -15,12 +15,25 @@
 
 <script type="text/javascript">
 var canvas = kk.$('#testCanvas');
-var loop = new kk.Loop(canvas.getContext('2d')).showInfo(false, function(context) {
+var frameCounter = 0;
+var frameTimer = 0;
+var realFps = 0;
+var loop = new kk.Loop(canvas.getContext('2d'), 60).showInfo(false, function(context, time) {
+    if(time < 0)
+      console.log(' < 0 ');
+    frameTimer += time;
+    if(frameTimer >= 1000) {
+      realFps = Math.round(frameCounter / frameTimer * 1000 );
+      frameTimer = 0;
+      frameCounter = 0;
+    }
     context.save();
     context.font = '800 30px Helvetica, Arial, sans-serif';
     context.fillStyle = '#000';
-    context.fillText(loop.size() + ' Objects ' + loop.fps() + ' FPS', 5, 30);
+    context.fillText(loop.size() + ' Objects ' + realFps + '('+loop.fps()+') FPS', 5, 30);
     context.restore();
+    frameCounter++;
+    
   });
 var animation = null;
 
@@ -32,7 +45,7 @@ var loader = new kk.ResourceLoader()
       var animation = new kk.g2d.SpriteAnimation(sprite);
       animation.x = kk.rand(0, 400);
       animation.y = kk.rand(0, 400);
-      animation.setup('walkLeft', [36, 37, 38], { frameTime: 150, bounce: true });
+      animation.setup('walkLeft', [36, 37, 38], { frameTime: kk.rand(50, 300), bounce: true });
       loop.push(animation).start();
       animation.play('walkLeft');
     }
