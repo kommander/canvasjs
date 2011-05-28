@@ -78,6 +78,13 @@ kk.g2d.Vector2D = function(x, y, angle) {
   };
   
   /**
+   * Get the dot product of this vector to another vector
+   */
+  this.dotProduct = function(other) {
+    return this.x * other.x + this.y * other.y;
+  };
+  
+  /**
    * Returns a new vector with the same attributes as this
    */
   this.copy = function(){
