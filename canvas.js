@@ -43,22 +43,41 @@ kk.extend = function() {
 /**
  * Subclassing with privates
  */
-kk.subclass = function(subclass, superclass) {
-  for(var k in superclass){
-    if(typeof(superclass[k]) == 'function'){
-      subclass[k] = (superclass[k]).bind(superclass);
-    } else {
-      subclass[k] = superclass[k];
+kk.Class = function(){ this.init = function(){}; };
+kk.Class.initializing = false;
+kk.Class.extend = function(o) {
+  
+  kk.Class.initializing = true;
+  var _super = new this();
+  kk.Class.initializing = false;
+  
+  var Class = function() {
+    this._super = _super;
+    if(!kk.Class.initializing) {
+      o.init.apply(this, arguments);
+      for(k in this._super){
+        if(typeof(this._super[k]) == 'function' && k != 'init' && k != '_super'){
+          var sup = this._super;
+          while(sup._super){
+            this[k] = sup[k].bind(this);
+            sup = sup._super;
+          }
+        }
+      }
     }
+  };
+  
+  Class.prototype = _super;
+  if(this.__s){
+    _super.init = this.__s;
   }
-  superclass.t = (function(replace){ 
-    if(!__){
-      throw new Error('A super class must use the __ as this notation.');
-    }
-    __ = replace; 
-  })(subclass);
-  return superclass;
-}
+  Class.__s = o.init;
+  Class.constructor = Class;
+  Class.extend = arguments.callee;
+  
+  return Class;
+};
+
 /**
  * Rotate a path array with [x, y, x, y, ... ]
  */
