@@ -2,9 +2,7 @@ var canvas = kk.$('#testCanvas');
 var context = canvas.getContext('2d');
 
 var o = function(x, y, rotation, path){
-  var _sinBuf = 0,
-  _cosBuf = 0,
-  _rotation = rotation,
+  var _rotation = rotation,
   _rotationDiff = 0;
   
   this.x = x;
@@ -15,27 +13,13 @@ var o = function(x, y, rotation, path){
     if(rot != undefined) {
       _rotationDiff = rot - _rotation;
       _rotation = rot;
-      this.rotatePath(_rotationDiff);
+      kk.g2d.rotatePath(this.path, Math.sin(_rotationDiff), Math.cos(_rotationDiff));
     }
     return _rotation;
   };
   
-  this.rotatePath = function(rot) {
-    _sinBuf = Math.sin(rot);
-    _cosBuf = Math.cos(rot);
-    var x = 0;
-    var y = 0;
-    for(var i = 0; i < this.path.length; i += 2) {
-      x = (this.path[i] * _cosBuf - this.path[i+1] * _sinBuf);
-      y = (this.path[i+1] * _cosBuf + this.path[i] * _sinBuf);
-      this.path[i] = x; 
-      this.path[i+1] = y;
-    }
-  };
-  
-  
   this.drawPath = getDrawPathFunction(this);
-  this.rotatePath(rotation);
+  kk.g2d.rotatePath(this.path, Math.sin(rotation), Math.cos(rotation));
   this.colliders = [];
   this.color = '#0f0';
   this.bradius = 0;
@@ -95,7 +79,7 @@ var o = function(x, y, rotation, path){
     this.draw(context);
     
     //draw path points
-    
+    /*
     context.save();
     for(var i = 0; i < this.path.length; i += 2) {
       context.beginPath();
@@ -105,7 +89,7 @@ var o = function(x, y, rotation, path){
       context.closePath();
     }
     context.restore();
-    
+    */
     
     /*
     //draw bradius

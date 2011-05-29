@@ -30,6 +30,18 @@ if(!Function.prototype.bind){
 }
 
 /**
+ * Rotate a path array with [x, y, x, y, ... ]
+ */
+kk.g2d.rotatePath = function(path, sinus, cosinus) {
+  var x = 0;
+  for(var i = 0; i < path.length; i += 2) {
+    x = (path[i] * cosinus - path[i + 1] * sinus);
+    path[i + 1] = (path[i + 1] * cosinus + path[i] * sinus);
+    path[i] = x; 
+  }
+};
+
+/**
  * Get a random number between a min and a max number
  */
 kk.rand = function(minNum, maxNum) 
