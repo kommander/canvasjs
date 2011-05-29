@@ -6,8 +6,10 @@
  * Copyright 2011 Sebastian Herrlinger
  */
 kk.g2d.Sprite = function(image, tileWidth, tileHeight) {
+  kk.extend(this, new kk.g2d.Vector2D(0, 0, 0));
   
-  var _tile = [],
+  var __ = this,
+  _tile = [],
   _image = image,
   _position = 0,
   _tileWidth = tileWidth,
@@ -19,48 +21,45 @@ kk.g2d.Sprite = function(image, tileWidth, tileHeight) {
     for(var j = 0; j < image.width / tileWidth; j++) {
       _tile[tileIndex] = eval('(function(context) { ' +
         'context.drawImage(_image, ' + j * tileWidth + ', ' + i * tileHeight + ', ' + 
-        _tileWidth + ', ' + _tileHeight + ', this.x, this.y, ' + _tileWidth + ', ' + _tileHeight + '); })').bind(this);
+        _tileWidth + ', ' + _tileHeight + ', __.x, __.y, ' + _tileWidth + ', ' + _tileHeight + '); })');
       tileIndex++;
     }
   }
   
-  //TODO: replace with Vector2D
-  this.x = 0;
-  this.y = 0;
-  this.rotation = 0;
+  __.rotation = 0;
   
   /**
    * Jump to the next tile in order
    */
-  this.next = function() {
+  __.next = function() {
     _position = (++_position < _tile.length) || 0;
   };
   
   /**
    * Jump to the previous tile in order
    */
-  this.prev = function() {
+  __.prev = function() {
     _position = (++_position > 0) || _tile.length - 1;
   };
   
   /**
    * Get a specific tile
    */
-  this.get = function(num) {
+  __.get = function(num) {
     return _tile[num];
   };
   
   /**
    * Render the current tile to the context
    */
-  this.tick = function(context, tickTimeDiff) {
-    this.get(_position)(context);
+  __.tick = function(context, tickTimeDiff) {
+    __.get(_position)(context);
   };
   
   /**
    * Get the current position
    */
-  this.position = function(num) {
+  __.position = function(num) {
     if(num != undefined)
       _position = num;
     return _position;
@@ -69,7 +68,7 @@ kk.g2d.Sprite = function(image, tileWidth, tileHeight) {
   /**
    * Returns the number of tiles in the sprite
    */
-  this.length = function(){
+  __.length = function(){
     return _tile.length;
   };
 };

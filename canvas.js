@@ -30,6 +30,36 @@ if(!Function.prototype.bind){
 }
 
 /**
+ * Extend an objects public attributes with publics from another
+ */
+kk.extend = function() {
+  for(var i = 1; i < arguments.length; i++){
+    for(var k in arguments[i]){
+      arguments[0][k] = arguments[i][k];
+    }
+  }
+};
+
+/**
+ * Subclassing with privates
+ */
+kk.subclass = function(subclass, superclass) {
+  for(var k in superclass){
+    if(typeof(superclass[k]) == 'function'){
+      subclass[k] = (superclass[k]).bind(superclass);
+    } else {
+      subclass[k] = superclass[k];
+    }
+  }
+  superclass.t = (function(replace){ 
+    if(!__){
+      throw new Error('A super class must use the __ as this notation.');
+    }
+    __ = replace; 
+  })(subclass);
+  return superclass;
+}
+/**
  * Rotate a path array with [x, y, x, y, ... ]
  */
 kk.g2d.rotatePath = function(path, sinus, cosinus) {

@@ -7,8 +7,10 @@
  * Copyright 2011 Sebastian Herrlinger
  */
 kk.g2d.SpriteAnimation = function(sprite){
+  kk.extend(this, new kk.g2d.Vector2D(0, 0, 0));
   
-  var _sprite = sprite,
+  var __ = this, 
+  _sprite = sprite,
   _animations = {},
   _empty = { play: function(){} },
   _playing = _empty,
@@ -32,7 +34,7 @@ kk.g2d.SpriteAnimation = function(sprite){
    * Create an animation from the given sprite frames,
    * save it with the given name.
    */
-  this.setup = function(name, frames, options) {
+  __.setup = function(name, frames, options) {
     if(!options)
       options = {};
     
@@ -90,7 +92,7 @@ kk.g2d.SpriteAnimation = function(sprite){
   /**
    * play an animation that was setup before
    */
-  this.play = function(name) {
+  __.play = function(name) {
     _animations[name].time = 0;
     _animations[name].pos = _animations[name].startPos;
     _playing = _animations[name];
@@ -99,30 +101,30 @@ kk.g2d.SpriteAnimation = function(sprite){
   /**
    * play from the current position to another
    */
-  this.playTo = function(name, to) {
+  __.playTo = function(name, to) {
     //TODO: implement
   };
   
   /**
    * play from the given position to another
    */
-  this.playFromTo = function(name, from, to) {
+  __.playFromTo = function(name, from, to) {
     //TODO: implement
   };
   
   /**
    * stop an animation
    */
-  this.stop = function() {
+  __.stop = function() {
     _playing = _empty;
   };
   
   /** 
    * Render the animations
    */
-  this.tick = function(context, tickTimeDiff) {
+  __.tick = function(context, tickTimeDiff) {
     context.save();
-    context.translate(this.x, this.y);
+    context.translate(__.x, __.y);
     _playing.time += tickTimeDiff;
     if(_playing.time >= _playing.frameTime){
       _playing.play();

@@ -8,86 +8,88 @@
  */
 
 kk.g2d.Vector2D = function(x, y, angle) {
-  this.angle = angle;
-  this.x = x;
-  this.y = y;
+  var __ = this;
+  
+  __.angle = angle;
+  __.x = x;
+  __.y = y;
   
   /** 
    * Move based on angle of trajectory and magnitude of distance
    * a - the angle to move in
    * m - how far to move 
    */
-  this.move = function(a, m) {
-    this.x += Math.cos(kk.g2d.Trig.radian(a)) * m;
-    this.y += Math.sin(kk.g2d.Trig.radian(a)) * m;
+  __.move = function(a, m) {
+    __.x += Math.cos(kk.g2d.Trig.radian(a)) * m;
+    __.y += Math.sin(kk.g2d.Trig.radian(a)) * m;
   };
    
   /**
    * Move left based on the direction angle
    * m - how far to move 
    */
-  this.left = function(m) {
-    this.move(this.angle - 90, m);
+  __.left = function(m) {
+    __.move(__.angle - 90, m);
   };
   
   /**
    * Move right based on the direction angle
    * m - how far to move 
    */
-  this.right = function(m) {
-    this.move(this.angle + 90, m);
+  __.right = function(m) {
+    __.move(__.angle + 90, m);
   };
    
   /**
    * Move forward based on the direction angle
    * m - how far to move 
    */
-  this.forward = function(m) {
-    this.move(this.angle, m);
+  __.forward = function(m) {
+    __.move(__.angle, m);
   };
   
   /**
    * Move backward based on the direction angle
    * m - how far to move 
    */
-  this.backward = function(m) {
-    this.move(this.angle - 180, m);
+  __.backward = function(m) {
+    __.move(__.angle - 180, m);
   };
   
   /**
    * Set angle to face the given point
    * p - the geometric point 
    */
-  this.angleTo = function(p) {
-    return this.angle = kk.g2d.Trig.getAngle(this, p);
+  __.angleTo = function(p) {
+    return __.angle = kk.g2d.Trig.getAngle(__, p);
   };
   
   /**
-   * Get the distance from this instance to a given point
+   * Get the distance from __ instance to a given point
    * p - the geometric point 
    */
-  this.distance = function(p) {
-    return kk.g2d.Trig.getDistance(this, p);
+  __.distance = function(p) {
+    return kk.g2d.Trig.getDistance(__, p);
   };
   
   /**
    * Get the distance without applying square root for comparison
    */
-  this.comparableDistance = function(p) {
-    return kk.g2d.Trig.getSquaredDistance(this, p);
+  __.comparableDistance = function(p) {
+    return kk.g2d.Trig.getSquaredDistance(__, p);
   };
   
   /**
-   * Get the dot product of this vector to another vector
+   * Get the dot product of __ vector to another vector
    */
-  this.dotProduct = function(other) {
-    return this.x * other.x + this.y * other.y;
+  __.dotProduct = function(other) {
+    return __.x * other.x + __.y * other.y;
   };
   
   /**
-   * Returns a new vector with the same attributes as this
+   * Returns a new vector with the same attributes as __
    */
-  this.copy = function(){
-    return new kk.g2d.Vector2D(this.x, this.y, this.angle);
+  __.copy = function(){
+    return new kk.g2d.Vector2D(__.x, __.y, __.angle);
   };
-}
+};
