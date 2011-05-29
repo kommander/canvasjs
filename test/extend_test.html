@@ -1,0 +1,76 @@
+<html>
+<head>
+  <title>Multiple inheritance with protected variables</title>
+  <script type="text/javascript" src="../canvas.js"></script>
+</head>
+<body>
+<h1>Multiple inheritance with protected variables</h1>
+<h2>Based on the jQuery object extension (look at the console)</h2>
+<script type="text/javascript">
+var Test = kk.Class.extend({
+      
+  init: function(Test1arg1, Test1arg2) {
+    var priv = 'YEAHHHHH!',
+    v1 = 0, v2 = 0;
+    
+    v1 = Test1arg1;
+    v2 = Test1arg2;
+    
+    this.x = 20;
+    this.what = 'HELL ';
+    
+    this.say = function(){
+      console.log(this.x, priv, v1, v2, this);
+    };
+    
+    this.scream = function() {
+      console.log(this.what + priv + ' ' + this.x);
+    };
+    
+  }
+  
+});
+
+var Test2 = Test.extend({
+  
+  init: function(arg1, arg2) {
+    
+    this._super.init(arg1, arg2);
+    
+    this.say = function(){
+      this._super.say();
+    };
+        
+  }
+  
+});
+
+var Test3 = Test2.extend({
+  
+  init: function(Test3arg1, Test3arg2) {
+    
+    this._super.init(Test3arg1, Test3arg2);
+    
+  }
+  
+});
+
+var Test4 = Test3.extend({
+  
+  init: function(Test4arg1, Test4arg2) {
+    
+    this._super.init(Test4arg1, Test4arg2);
+    
+  }
+  
+});
+
+var z = new Test4('hello', 'world');
+z.x = 30;
+z.say();
+z.scream();
+console.log(z instanceof Test, z instanceof Test2, z instanceof Test3, z instanceof Test4)
+
+</script>
+</body>
+</html>
