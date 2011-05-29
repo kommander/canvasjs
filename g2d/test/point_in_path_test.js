@@ -4,7 +4,8 @@ var context = canvas.getContext('2d');
 var o = function(x, y, rotation, path){
   var _sinBuf = 0,
   _cosBuf = 0,
-  _rotation = 0;
+  _rotation = rotation,
+  _rotationDiff = 0;
   
   this.x = x;
   this.y = y;
@@ -12,23 +13,29 @@ var o = function(x, y, rotation, path){
   
   this.rotation = function(rot){
     if(rot != undefined) {
+      _rotationDiff = rot - _rotation;
       _rotation = rot;
-      _sinBuf = Math.sin(rot);
-      _cosBuf = Math.cos(rot);
-      var x = 0;
-      var y = 0;
-      for(var i = 0; i < this.path.length; i += 2) {
-        x = (this.path[i] * _cosBuf - this.path[i+1] * _sinBuf);
-        y = (this.path[i+1] * _cosBuf + this.path[i] * _sinBuf);
-        this.path[i] = x; 
-        this.path[i+1] = y;
-      }
+      this.rotatePath(_rotationDiff);
     }
     return _rotation;
   };
-  this.rotation(rotation);
+  
+  this.rotatePath = function(rot) {
+    _sinBuf = Math.sin(rot);
+    _cosBuf = Math.cos(rot);
+    var x = 0;
+    var y = 0;
+    for(var i = 0; i < this.path.length; i += 2) {
+      x = (this.path[i] * _cosBuf - this.path[i+1] * _sinBuf);
+      y = (this.path[i+1] * _cosBuf + this.path[i] * _sinBuf);
+      this.path[i] = x; 
+      this.path[i+1] = y;
+    }
+  };
+  
   
   this.drawPath = getDrawPathFunction(this);
+  this.rotatePath(rotation);
   this.colliders = [];
   this.color = '#0f0';
   this.bradius = 0;
@@ -50,6 +57,7 @@ var o = function(x, y, rotation, path){
     context.closePath();
     context.beginPath();
     context.translate(this.x, this.y);
+    context.rotate(_rotation);
     this.drawPath(context);
     context.stroke();
     context.closePath();
@@ -61,6 +69,7 @@ var o = function(x, y, rotation, path){
       context.save();
       context.beginPath();
       context.translate(other.x, other.y);
+      context.rotate(other.rotation());
       other.drawPath(context);
       context.closePath();
       context.restore();
@@ -75,7 +84,7 @@ var o = function(x, y, rotation, path){
   };
   
   this.tick = function(context, timeDiff) {
-    //this.rotation(_rotation + 1);
+    this.rotation(_rotation + 0.01);
     this.color = '#0f0';
     for(var i = 0; i < this.colliders.length; i++) {
       if(this.collidesWith(context, this.colliders[i])){
@@ -86,7 +95,7 @@ var o = function(x, y, rotation, path){
     this.draw(context);
     
     //draw path points
-    /*
+    
     context.save();
     for(var i = 0; i < this.path.length; i += 2) {
       context.beginPath();
@@ -96,7 +105,7 @@ var o = function(x, y, rotation, path){
       context.closePath();
     }
     context.restore();
-    */
+    
     
     /*
     //draw bradius
