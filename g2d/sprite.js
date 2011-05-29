@@ -17,9 +17,9 @@ kk.g2d.Sprite = function(image, tileWidth, tileHeight) {
   var tileIndex = 0;
   for(var i = 0; i < image.height / tileHeight; i++) {
     for(var j = 0; j < image.width / tileWidth; j++) {
-      _tile[tileIndex] = (function(offsetX, offsetY, context) {
-        context.drawImage(_image, offsetX, offsetY, _tileWidth, _tileHeight, this.x, this.y, _tileWidth, _tileHeight);
-      }).bind(this, j * tileWidth, i * tileHeight);
+      _tile[tileIndex] = eval('(function(context) { ' +
+        'context.drawImage(_image, ' + j * tileWidth + ', ' + i * tileHeight + ', ' + 
+        _tileWidth + ', ' + _tileHeight + ', this.x, this.y, ' + _tileWidth + ', ' + _tileHeight + '); })').bind(this);
       tileIndex++;
     }
   }
