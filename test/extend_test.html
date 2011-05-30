@@ -27,6 +27,9 @@ var Test = kk.Class.extend({
       console.log(this.what + priv + ' ' + this.x);
     };
     
+    this.getPriv = function(){
+      return priv;
+    };
   }
   
 });
@@ -68,7 +71,9 @@ var Test4 = Test3.extend({
       console.log('say test 4');
       this._super.say(' + LEVEL 4');
     };
-    this.tell = function(){};
+    this.tell = function(){
+      console.log('Private getter: ' + this.getPriv());
+    };
   }
   
 });
@@ -76,6 +81,7 @@ var Test4 = Test3.extend({
 var z = new Test4('hello', 'world');
 z.x = 30;
 z.say();
+z.tell();
 z.scream();
 console.log(z instanceof Test, z instanceof Test2, z instanceof Test3, z instanceof Test4)
 

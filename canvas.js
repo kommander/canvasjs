@@ -72,7 +72,13 @@ kk.Class._recurseSuper = function(current, sups, t, k) {
     
     kk.Class._recurseSuper(i, sups, t, k);
   } else {
-    sups[current][k] = sups[current][k].bind(t);
+    if(current > 0) {
+      sups[current][k] = (function(f, t){
+        return function() {
+          return f.apply(t, arguments);
+        }
+      })(sups[current][k], t);
+    }
   }
 };
 
