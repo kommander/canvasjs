@@ -43,8 +43,39 @@ kk.extend = function() {
 /**
  * Subclassing with privates
  */
-kk.Class = function(){ this.init = function(){}; };
+kk.Class = function(){ };
 kk.Class.initializing = false;
+kk.Class._fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
+kk.Class._recurseSuper = function(current, sups, t, k) {
+  
+  if(sups.length > 1 && kk.Class._fnTest.test(sups[current][k])){
+    var check = current;
+    
+    for(var i = current; i < sups.length; i++) {
+      if(sups[current][k] == sups[i][k] && i != sups.length - 1) {
+        multiple = true;
+        continue;
+      }
+      check = (multiple) ? i - 1 : i;
+      break;
+    }
+    
+    sups[current][k] = (function(sup, f, check) {
+      return function() {
+        var tmp = this._super;
+        this._super = sup;
+        var ret = f.apply(this, arguments);
+        this._super = tmp;
+        return ret;
+      }
+    })(sups[check]._super, sups[check][k], check);
+    
+    kk.Class._recurseSuper(i, sups, t, k);
+  } else {
+    sups[current][k] = sups[current][k].bind(t);
+  }
+};
+
 kk.Class.extend = function(o) {
   
   kk.Class.initializing = true;
@@ -53,15 +84,20 @@ kk.Class.extend = function(o) {
   
   var Class = function() {
     this._super = _super;
-    if(!kk.Class.initializing) {
+    if(!kk.Class.initializing && this.init) {
       o.init.apply(this, arguments);
+      
+      var sups = [];
+      var current = this;
+      
+      while(current._super != undefined) {
+        sups.push(current);
+        current = current._super
+      }
+      
       for(k in this._super){
         if(typeof(this._super[k]) == 'function' && k != 'init' && k != '_super'){
-          var sup = this._super;
-          while(sup._super){
-            this[k] = sup[k].bind(this);
-            sup = sup._super;
-          }
+          kk.Class._recurseSuper(0, sups, this, k);                 
         }
       }
     }

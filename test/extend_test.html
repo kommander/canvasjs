@@ -19,8 +19,8 @@ var Test = kk.Class.extend({
     this.x = 20;
     this.what = 'HELL ';
     
-    this.say = function(){
-      console.log(this.x, priv, v1, v2, this);
+    this.say = function(text){
+      console.log(this.x, v1, v2, text);
     };
     
     this.scream = function() {
@@ -37,8 +37,9 @@ var Test2 = Test.extend({
     
     this._super.init(arg1, arg2);
     
-    this.say = function(){
-      this._super.say();
+    this.say = function(text){
+      console.log('say test 2');
+      this._super.say(text + ' + LEVEL 2');
     };
         
   }
@@ -50,7 +51,10 @@ var Test3 = Test2.extend({
   init: function(Test3arg1, Test3arg2) {
     
     this._super.init(Test3arg1, Test3arg2);
-    
+    this.say = function(text){
+      console.log('say test 3');
+      this._super.say(text + ' + LEVEL 3');
+    };
   }
   
 });
@@ -60,7 +64,11 @@ var Test4 = Test3.extend({
   init: function(Test4arg1, Test4arg2) {
     
     this._super.init(Test4arg1, Test4arg2);
-    
+    this.say = function(){
+      console.log('say test 4');
+      this._super.say(' + LEVEL 4');
+    };
+    this.tell = function(){};
   }
   
 });
