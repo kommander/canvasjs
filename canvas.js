@@ -90,7 +90,7 @@ kk.Class.extend = function(o) {
   
   var Class = function() {
     this._super = _super;
-    if(!kk.Class.initializing && this.init) {
+    if(!kk.Class.initializing && o.init) {
       o.init.apply(this, arguments);
       
       var sups = [];
