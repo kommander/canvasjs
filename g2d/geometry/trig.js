@@ -28,7 +28,7 @@ kk.g2d.Trig = new (function() {
    * Find the angle of trajectory from two given points 
    */
   this.getAngle = function(a, b) {
-    return Math.atan2(b.y - a.y, b.x - a.x) / this.PI180;
+    return Math.atan2(b.y - a.y, b.x - a.x);
   };
  
   /**

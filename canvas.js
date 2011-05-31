@@ -41,84 +41,45 @@ kk.extend = function() {
 };
 
 /**
- * Subclassing with privates
+ * Inheritance
+ * Based on John Resig http://ejohn.org/blog/simple-javascript-inheritance/
+ * Removed super function temporary and using full super prototype
+ * super function have to be called like: this._super.init.call(this, arg1, arg2);
  */
-kk.Class = function(){ };
+kk.Class = function(){};
 kk.Class.initializing = false;
 kk.Class._fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
-kk.Class._recurseSuper = function(current, sups, t, k) {
-  
-  if(sups.length > 1 && kk.Class._fnTest.test(sups[current][k])){
-    var check = current;
-    
-    for(var i = current; i < sups.length; i++) {
-      if(sups[current][k] == sups[i][k] && i != sups.length - 1) {
-        multiple = true;
-        continue;
-      }
-      check = (multiple) ? i - 1 : i;
-      break;
-    }
-    
-    sups[current][k] = (function(sup, f, check) {
-      return function() {
-        var tmp = this._super;
-        this._super = sup;
-        var ret = f.apply(this, arguments);
-        this._super = tmp;
-        return ret;
-      }
-    })(sups[check]._super, sups[check][k], check);
-    
-    kk.Class._recurseSuper(i, sups, t, k);
-  } else {
-    if(current > 0) {
-      sups[current][k] = (function(f, t){
-        return function() {
-          return f.apply(t, arguments);
-        }
-      })(sups[current][k], t);
-    }
-  }
-};
-
-kk.Class.extend = function(o) {
+kk.Class.extend = function(prop) {
+  var _super = this.prototype;
   
   kk.Class.initializing = true;
-  var _super = new this();
+  var prototype = new this();
   kk.Class.initializing = false;
   
-  var Class = function() {
-    this._super = _super;
-    if(!kk.Class.initializing && o.init) {
-      o.init.apply(this, arguments);
-      
-      var sups = [];
-      var current = this;
-      
-      while(current._super != undefined) {
-        sups.push(current);
-        current = current._super
-      }
-      
-      for(k in this._super){
-        if(typeof(this._super[k]) == 'function' && k != 'init' && k != '_super'){
-          kk.Class._recurseSuper(0, sups, this, k);                 
-        }
-      }
-    }
-  };
-  
-  Class.prototype = _super;
-  if(this.__s){
-    _super.init = this.__s;
+  for (var name in prop) {
+    prototype[name] = typeof prop[name] == "function" && kk.Class._fnTest.test(prop[name]) ?
+      (function(name, fn){
+        return function() {
+          this._super = _super;
+          return fn.apply(this, arguments);
+        };
+      })(name, prop[name]) :
+      prop[name];
   }
-  Class.__s = o.init;
+  
+  function Class() {
+    if ( !kk.Class.initializing && this.init ){
+      this.init.apply(this, arguments);
+    }
+  }
+  
+  Class.prototype = prototype;
   Class.constructor = Class;
   Class.extend = arguments.callee;
   
   return Class;
 };
+
 
 /**
  * Rotate a path array with [x, y, x, y, ... ]
