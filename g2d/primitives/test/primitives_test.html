@@ -1,0 +1,40 @@
+<html>
+<head>
+  <title>Primitives Test</title>
+  <script type="text/javascript" src="../../../canvas.js"></script>
+  <script type="text/javascript" src="../../../dom.js"></script>
+  <script type="text/javascript" src="../../../loop/loop.js"></script>
+  <script type="text/javascript" src="../../geometry/trig.js"></script>
+  <script type="text/javascript" src="../../geometry/vector2d.js"></script>
+  <script type="text/javascript" src="../ngon.js"></script>
+</head>
+<body>
+<h1>Primitives Test</h1>
+<h2>Rendering some primitive objects</h2>
+<canvas id="testCanvas" width="400" height="400" />
+
+<script type="text/javascript">
+var canvas = kk.$('#testCanvas');
+var context = canvas.getContext('2d');
+var sprite = null;
+
+var path = [-20, -20, -20, 10, -5, 5, 20, 20, 20, -10];
+var ngon = new (kk.g2d.Ngon.extend({
+  init: function(x, y, path, fillStyle, strokeStyle){
+    this._super.init.call(this, x, y, path, fillStyle, strokeStyle);
+  },
+  
+  tick: function(ctx, time){
+    this.angle += 0.1;
+    this._super.tick.call(this, ctx, time);
+  }
+}))(50, 50, path, '#0f0');
+
+var loop = new kk.Loop(context, 60)
+  .showInfo(true)
+  .push(ngon)
+  .start();
+
+</script>
+</body>
+</html>
